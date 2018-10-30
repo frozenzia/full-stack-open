@@ -3,7 +3,7 @@ import React from 'react';
 import Osa from './Osa';
 
 const Sisalto = (props) => {
-    const { part1, part2, part3 } = props;
+    const [ part1, part2, part3 ] = props.parts;
     return (
         <div>
             <Osa name={part1.nimi} amount={part1.tehtavia} />

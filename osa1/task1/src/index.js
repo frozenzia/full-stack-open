@@ -6,27 +6,29 @@ import Sisalto from './Sisalto';
 import Yhteensa from './Yhteensa';
 
 const App = () => {
-  const kurssi = 'Half Stack -sovelluskehitys'
-  const osa1 = {
-    nimi: 'Reactin perusteet',
-    tehtavia: 10
-  }
-  const osa2 = {
-    nimi: 'Tiedonvälitys propseilla',
-    tehtavia: 7
-  }
-  const osa3 = {
-    nimi: 'Komponenttien tila',
-    tehtavia: 14
-  }
+    const kurssi = 'Half Stack -sovelluskehitys'
+    const osat = [
+        {
+            nimi: 'Reactin perusteet',
+            tehtavia: 10
+        },
+        {
+            nimi: 'Tiedonvälitys propseilla',
+            tehtavia: 7
+        },
+        {
+            nimi: 'Komponenttien tila',
+            tehtavia: 14
+        }
+    ];
 
-  return (
+    return (
     <div>
         <Otsikko course={kurssi} />
-        <Sisalto part1={osa1} part2={osa2} part3={osa3} />
-        <Yhteensa val1={osa1.tehtavia} val2={osa2.tehtavia} val3={osa3.tehtavia} />
+        <Sisalto parts={osat} />
+        <Yhteensa parts={osat} />
     </div>
-  )
+    )
 }
 
 ReactDOM.render(
