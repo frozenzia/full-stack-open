@@ -24,6 +24,11 @@ class App extends Component {
     };
 
     render() {
+        const noValuesYet = 'ei vielä palautetta';
+        const totAnswers = (Object.values(this.state)).reduce((accum, val) => accum + val, 0);
+        const average = parseFloat(((this.state.good*1 - this.state.bad*1) / totAnswers).toFixed(1));
+        const percentPositive = parseFloat(((this.state.good / totAnswers) * 100).toFixed(1));
+
         return (
             <div>
                 <Otsikko text={giveFeedback} />
@@ -40,6 +45,8 @@ class App extends Component {
                 <p>{good} {this.state.good}</p>
                 <p>{neutral} {this.state.neutral}</p>
                 <p>{bad} {this.state.bad}</p>
+                <p>keskiarvo {totAnswers > 0 ? average : noValuesYet}</p>
+                <p>positiivisia {totAnswers > 0 ? `${percentPositive} %` : noValuesYet}</p>
             </div>
         )
     }
