@@ -1,36 +1,48 @@
-import React from 'react'
+import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 
+import Button from './Button';
 import Otsikko from './Otsikko';
-import Sisalto from './Sisalto';
-import Yhteensa from './Yhteensa';
 
-const App = () => {
-    const kurssi = {
-        nimi: 'Half Stack -sovelluskehitys',
-        osat: [
-            {
-                nimi: 'Reactin perusteet',
-                tehtavia: 10
-            },
-            {
-                nimi: 'Tiedonvälitys propseilla',
-                tehtavia: 7
-            },
-            {
-                nimi: 'Komponenttien tila',
-                tehtavia: 14
-            }
-        ],
+const giveFeedback = 'Anna palautetta';
+const stats = 'statistiikka';
+const good = 'hyvä';
+const neutral = 'neutraali';
+const bad = 'huono';
+
+class App extends Component {
+    state = {
+        good: 0,
+        neutral: 0,
+        bad: 0,
     };
 
-    return (
-        <div>
-            <Otsikko course={kurssi.nimi} />
-            <Sisalto parts={kurssi.osat} />
-            <Yhteensa parts={kurssi.osat} />
-        </div>
-    )
+    addOne = (option) => {
+        this.setState((prevState) => {
+            return { [option]: prevState[option] += 1 };
+        });
+    };
+
+    render() {
+        return (
+            <div>
+                <Otsikko text={giveFeedback} />
+                <Button text={good} handleClick={() => {
+                    this.addOne('good');
+                }} />
+                <Button text={neutral} handleClick={() => {
+                    this.addOne('neutral');
+                }} />
+                <Button text={bad} handleClick={() => {
+                    this.addOne('bad');
+                }} />
+                <Otsikko text={stats} />
+                <p>{good} {this.state.good}</p>
+                <p>{neutral} {this.state.neutral}</p>
+                <p>{bad} {this.state.bad}</p>
+            </div>
+        )
+    }
 }
 
 ReactDOM.render(
