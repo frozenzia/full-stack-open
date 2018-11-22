@@ -1,18 +1,10 @@
 const strings = {
     labels: {
-        good: 'hyvä',
-        neutral: 'neutraali',
-        bad: 'huono',
-        total: 'yhteensä',
-        avg: 'keskiarvo',
-        positive: 'positiivisia',
+        pickQuote: 'next anecdote'
     },
     headers: {
-        giveFeedback: 'Anna palautetta',
-        stats: 'statistiikka',
     },
     misc: {
-        noValuesYet: 'ei yhtään palautetta annettu',
     },
 };
 
