@@ -10,9 +10,9 @@ const Statistics = ({ feedback }) => {
     const average = parseFloat(((feedback.good*1 - feedback.bad*1) / totAnswers).toFixed(1));
     const percentPositive = parseFloat(((feedback.good / totAnswers) * 100).toFixed(1));
 
-    return (
+    let stats = strings.misc.noValuesYet;
+    if (totAnswers > 0) stats = (
         <div>
-            <Otsikko text={strings.headers.stats} />
             <Statistic label={strings.labels.good} stat={feedback.good} />
             <Statistic label={strings.labels.neutral} stat={feedback.neutral} />
             <Statistic label={strings.labels.bad} stat={feedback.bad} />
@@ -20,14 +20,15 @@ const Statistics = ({ feedback }) => {
                 label={strings.labels.total}
                 stat={totAnswers}
             />
-            <Statistic
-                label={strings.labels.avg}
-                stat={totAnswers > 0 ? average : strings.misc.noValuesYet}
-            />
-            <Statistic
-                label={strings.labels.positive}
-                stat={totAnswers > 0 ? `${percentPositive} %` : strings.misc.noValuesYet}
-            />
+            <Statistic label={strings.labels.avg} stat={average} />
+            <Statistic label={strings.labels.positive} stat={`${percentPositive} %`} />
+        </div>
+    );
+
+    return (
+        <div>
+            <Otsikko text={strings.headers.stats} />
+            {stats}
         </div>
     );
 };

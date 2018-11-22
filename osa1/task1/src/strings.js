@@ -12,7 +12,7 @@ const strings = {
         stats: 'statistiikka',
     },
     misc: {
-        noValuesYet: 'ei vielä palautetta',
+        noValuesYet: 'ei yhtään palautetta annettu',
     },
 };
 
