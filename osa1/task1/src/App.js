@@ -21,6 +21,11 @@ const App = () => {
         [option]: state[option] += 1,
     });
 
+    const noValuesYet = 'ei vielä palautetta';
+    const totAnswers = (Object.values(state)).reduce((accum, val) => accum + val, 0);
+    const average = parseFloat(((state.good*1 - state.bad*1) / totAnswers).toFixed(1));
+    const percentPositive = parseFloat(((state.good / totAnswers) * 100).toFixed(1));
+
     return (
         <div>
             <Otsikko text={giveFeedback} />
@@ -31,6 +36,9 @@ const App = () => {
             <p>{good} {state.good}</p>
             <p>{neutral} {state.neutral}</p>
             <p>{bad} {state.bad}</p>
+            <p>yhteensä {totAnswers}</p>
+            <p>keskiarvo {totAnswers > 0 ? average : noValuesYet}</p>
+            <p>positiivisia {totAnswers > 0 ? `${percentPositive} %` : noValuesYet}</p>
         </div>
     )
 }
