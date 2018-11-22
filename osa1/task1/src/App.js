@@ -7,6 +7,7 @@ import strings from './strings';
 const App = () => {
     const [state, setState] = useState({
         selected: 0,
+        votes: [],
     });
 
     const anecdotes = [
@@ -22,12 +23,28 @@ const App = () => {
         // Just pick random number between 0 and the last index of
         // anecdotes array, then set this.state.selected to that value.
         const randomNbr = Math.floor(Math.random() * Math.floor(anecdotes.length - 1));
-        setState({ selected: randomNbr });
+        setState({ ...state, selected: randomNbr });
     };
+
+    const increaseVote = () => {
+        const currentAnecdote = state.selected;
+        const newVotes = [...state.votes];
+        if (!newVotes[currentAnecdote]) newVotes[currentAnecdote] = 1; // 1st vote
+        else newVotes[currentAnecdote] += 1;
+        setState({ ...state, votes: newVotes });
+    }
+
+    let votes = state.votes[state.selected];
+    if (!votes) votes = 0;
 
     return (
         <div>
             {anecdotes[state.selected]}<br />
+            {strings.misc.hasVotes1}{votes}{strings.misc.hasVotes2}<br />
+            <Button
+                handleClick={increaseVote}
+                text={strings.labels.vote}
+            />
             <Button handleClick={pickRandomQuote} text={strings.labels.pickQuote} />
         </div>
     )
