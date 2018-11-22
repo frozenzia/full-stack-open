@@ -2,7 +2,7 @@ import React from 'react';
 
 const Statistic = ({ label, stat }) => {
     return (
-        <p>{label} {stat}</p>
+        <tr><td>{label}</td><td>{stat}</td></tr>
     );
 };
 
