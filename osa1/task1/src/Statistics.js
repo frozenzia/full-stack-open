@@ -12,17 +12,16 @@ const Statistics = ({ feedback }) => {
 
     let stats = strings.misc.noValuesYet;
     if (totAnswers > 0) stats = (
-        <div>
-            <StatisticLine label={strings.labels.good} stat={feedback.good} />
-            <StatisticLine label={strings.labels.neutral} stat={feedback.neutral} />
-            <StatisticLine label={strings.labels.bad} stat={feedback.bad} />
-            <StatisticLine
-                label={strings.labels.total}
-                stat={totAnswers}
-            />
-            <StatisticLine label={strings.labels.avg} stat={average} />
-            <StatisticLine label={strings.labels.positive} stat={`${percentPositive} %`} />
-        </div>
+        <table>
+            <tbody>
+                <StatisticLine label={strings.labels.good} stat={feedback.good} />
+                <StatisticLine label={strings.labels.neutral} stat={feedback.neutral} />
+                <StatisticLine label={strings.labels.bad} stat={feedback.bad} />
+                <StatisticLine label={strings.labels.total} stat={totAnswers} />
+                <StatisticLine label={strings.labels.avg} stat={average} />
+                <StatisticLine label={strings.labels.positive} stat={`${percentPositive} %`} />
+            </tbody>
+        </table>
     );
 
     return (
