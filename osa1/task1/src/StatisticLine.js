@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Statistic = ({ label, stat }) => {
+const StatisticLine = ({ label, stat }) => {
     return (
         <p>{label} {stat}</p>
     );
 };
 
-export default Statistic;
+export default StatisticLine;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Otsikko from './Otsikko';
-import Statistic from './Statistic';
+import StatisticLine from './StatisticLine';
 import strings from './strings';
 
 const Statistics = ({ feedback }) => {
@@ -13,15 +13,15 @@ const Statistics = ({ feedback }) => {
     let stats = strings.misc.noValuesYet;
     if (totAnswers > 0) stats = (
         <div>
-            <Statistic label={strings.labels.good} stat={feedback.good} />
-            <Statistic label={strings.labels.neutral} stat={feedback.neutral} />
-            <Statistic label={strings.labels.bad} stat={feedback.bad} />
-            <Statistic
+            <StatisticLine label={strings.labels.good} stat={feedback.good} />
+            <StatisticLine label={strings.labels.neutral} stat={feedback.neutral} />
+            <StatisticLine label={strings.labels.bad} stat={feedback.bad} />
+            <StatisticLine
                 label={strings.labels.total}
                 stat={totAnswers}
             />
-            <Statistic label={strings.labels.avg} stat={average} />
-            <Statistic label={strings.labels.positive} stat={`${percentPositive} %`} />
+            <StatisticLine label={strings.labels.avg} stat={average} />
+            <StatisticLine label={strings.labels.positive} stat={`${percentPositive} %`} />
         </div>
     );
 
