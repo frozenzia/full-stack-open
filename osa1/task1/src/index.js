@@ -8,7 +8,8 @@ class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            selected: 0
+            selected: 0,
+            votes: [],
         }
     }
     pickRandomQuote = () => {
@@ -17,12 +18,29 @@ class App extends React.Component {
         const randomNbr = Math.floor(Math.random() * Math.floor(anecdotes.length - 1));
         this.setState({ selected: randomNbr });
     }
+    increaseVote = () => {
+        const currentAnecdote = this.state.selected;
+        const newVotes = [...this.state.votes];
+        if (!newVotes[currentAnecdote]) newVotes[currentAnecdote] = 1; // 1st vote
+        else newVotes[currentAnecdote] += 1;
+        this.setState({ votes: newVotes });
+    }
 
     render() {
+        let votes = this.state.votes[this.state.selected];
+        if (!votes) votes = 0;
         return (
             <div>
             {this.props.anecdotes[this.state.selected]}<br />
-            <Button handleClick={this.pickRandomQuote} text={strings.labels.pickQuote} />
+            {strings.misc.hasVotes1}{votes}{strings.misc.hasVotes2}<br />
+            <Button
+                handleClick={this.increaseVote}
+                text={strings.labels.vote}
+            />
+            <Button
+                handleClick={this.pickRandomQuote}
+                text={strings.labels.pickQuote}
+            />
             </div>
         )
     }
