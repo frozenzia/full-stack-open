@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 
 import Button from './Button';
-import strings from './strings';
-
+import strings, { getVoteString } from './strings';
+import Otsikko from './Otsikko';
 
 const App = () => {
     const [state, setState] = useState({
         selected: 0,
         votes: [],
+        mostVotes: null,
     });
 
     const anecdotes = [
@@ -21,7 +22,7 @@ const App = () => {
 
     const pickRandomQuote = () => {
         // Just pick random number between 0 and the last index of
-        // anecdotes array, then set this.state.selected to that value.
+        // anecdotes array, then set state.selected to that value.
         const randomNbr = Math.floor(Math.random() * Math.floor(anecdotes.length - 1));
         setState({ ...state, selected: randomNbr });
     };
@@ -31,23 +32,49 @@ const App = () => {
         const newVotes = [...state.votes];
         if (!newVotes[currentAnecdote]) newVotes[currentAnecdote] = 1; // 1st vote
         else newVotes[currentAnecdote] += 1;
-        setState({ ...state, votes: newVotes });
+
+        const onlyRealVotes = newVotes.filter((elem) =>
+            (typeof elem === 'number')
+        );
+        const newMax = Math.max(...onlyRealVotes);
+        const mostVotes = newVotes.findIndex((item) => {
+            return item === newMax;
+        });
+
+        setState({
+            ...state,
+            votes: newVotes,
+            mostVotes,
+        });
     }
 
     let votes = state.votes[state.selected];
     if (!votes) votes = 0;
 
+    let mostVotesResults = null;
+    if (state.mostVotes !== null) mostVotesResults = (
+        <div>
+            {anecdotes[state.mostVotes]}<br />
+            {getVoteString(state.votes[state.mostVotes])}
+        </div>
+    );
+
     return (
         <div>
             {anecdotes[state.selected]}<br />
-            {strings.misc.hasVotes1}{votes}{strings.misc.hasVotes2}<br />
+            {getVoteString(votes)}<br />
             <Button
                 handleClick={increaseVote}
                 text={strings.labels.vote}
             />
-            <Button handleClick={pickRandomQuote} text={strings.labels.pickQuote} />
+            <Button
+                handleClick={pickRandomQuote}
+                text={strings.labels.pickQuote}
+            />
+            <Otsikko text={strings.headers.mostVotes} />
+            {mostVotesResults}
         </div>
-    )
+    );
 }
 
 export default App;
