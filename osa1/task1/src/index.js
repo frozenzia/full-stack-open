@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Button from './Button';
-import strings from './strings';
+import strings, {getVoteString} from './strings';
+import Otsikko from './Otsikko';
 
 class App extends React.Component {
     constructor(props) {
@@ -10,6 +11,7 @@ class App extends React.Component {
         this.state = {
             selected: 0,
             votes: [],
+            mostVotes: null,
         }
     }
     pickRandomQuote = () => {
@@ -23,24 +25,44 @@ class App extends React.Component {
         const newVotes = [...this.state.votes];
         if (!newVotes[currentAnecdote]) newVotes[currentAnecdote] = 1; // 1st vote
         else newVotes[currentAnecdote] += 1;
-        this.setState({ votes: newVotes });
+
+        const onlyRealVotes = newVotes.filter((elem) =>
+            (typeof elem === 'number')
+        );
+        const newMax = Math.max(...onlyRealVotes);
+        const mostVotes = newVotes.findIndex((item) => {
+            return item === newMax;
+        });
+        this.setState({
+            votes: newVotes,
+            mostVotes,
+        });
     }
 
     render() {
         let votes = this.state.votes[this.state.selected];
         if (!votes) votes = 0;
+        let mostVotesResults = null;
+        if (this.state.mostVotes !== null) mostVotesResults = (
+            <div>
+                {this.props.anecdotes[this.state.mostVotes]}<br />
+                {getVoteString(this.state.votes[this.state.mostVotes])}
+            </div>
+        );
         return (
             <div>
-            {this.props.anecdotes[this.state.selected]}<br />
-            {strings.misc.hasVotes1}{votes}{strings.misc.hasVotes2}<br />
-            <Button
-                handleClick={this.increaseVote}
-                text={strings.labels.vote}
-            />
-            <Button
-                handleClick={this.pickRandomQuote}
-                text={strings.labels.pickQuote}
-            />
+                {this.props.anecdotes[this.state.selected]}<br />
+                {getVoteString(votes)}<br />
+                <Button
+                    handleClick={this.increaseVote}
+                    text={strings.labels.vote}
+                />
+                <Button
+                    handleClick={this.pickRandomQuote}
+                    text={strings.labels.pickQuote}
+                />
+                <Otsikko text={strings.headers.mostVotes} />
+                {mostVotesResults}
             </div>
         )
     }
