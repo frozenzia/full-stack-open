@@ -7,7 +7,10 @@ const Sisalto = ({ parts }) => {
     );
 
     return (
-        listOParts
+        <div>
+            {listOParts}
+            <p>yhteensä {parts.reduce((accum, part) => accum + part.tehtavia, 0)} tehtävää</p>
+        </div>
     );
 };
 
