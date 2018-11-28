@@ -1,94 +1,82 @@
 import axios from 'axios';
 import React from 'react';
-import Person from './components/Person';
 import Filter from './components/Filter';
 
 
 class App extends React.Component {
 
     state = {
-        persons: [],
-        newName: '',
-        newPhone: '',
+        countries: [],
         filter: '',
+        chosenCountry: '',
     };
 
     componentDidMount = () => {
-        axios.get('http://localhost:3003/persons')
+        axios.get('https://restcountries.eu/rest/v2/all')
         .then((response) => {
-            this.setState({ persons: response.data });
+            this.setState({ countries: response.data });
         });
     };
 
-    setNameAndNumber = (event) => {
-        event.preventDefault();
-        const name2Add = this.state.newName;
-        if (!this.state.persons.find((person) => {
-            return person.name === name2Add;
-        })) {
-            const persons = this.state.persons.concat(
-                {
-                    name: this.state.newName,
-                    phone: this.state.newPhone,
-                });
-            this.setState({ persons, newName: '', newPhone: '' });
-        } else alert('Sori, sen niminen ihminen löytyy jo listalta!');
-    };
-
-    handleNameChange = (event) => {
-        this.setState({ newName: event.target.value })
-    };
-
-    handlePhoneChange = (event) => {
-        this.setState({ newPhone: event.target.value })
-    };
-
     handleFilterChange = (event) => {
-        this.setState({ filter: event.target.value })
+        this.setState({ filter: event.target.value, chosenCountry: '' })
+    };
+
+    handleClick = (alpha2Code) => () => {
+        this.setState({ chosenCountry: alpha2Code })
     };
 
     render() {
-        let currentPeople = [...this.state.persons];
+        let currentCountries = [...this.state.countries];
         if (this.state.filter !== '') {
-            currentPeople = currentPeople.filter((person) => {
-                return person.name.toLowerCase().includes(
+            currentCountries = currentCountries.filter((c) => {
+                return c.name.toLowerCase().includes(
                     this.state.filter.toLowerCase()
                 );
             });
         }
-        const namesToShow = currentPeople.map(person =>
-            <Person key={person.name} name={person.name} phone={person.phone} />
-        );
+
+        let countryListOrStats = null;
+        if (currentCountries.length === 1 || this.state.chosenCountry !== '') {
+            let country = currentCountries[0];
+            if (this.state.chosenCountry !== '') {
+                country = currentCountries.find((c) => {
+                    return c.alpha2Code === this.state.chosenCountry;
+                });
+            }
+            const altString = `National flag of ${country.name}`;
+
+            countryListOrStats = (
+                <div>
+                    <h2>{country.name} ({country.nativeName})</h2>
+                    <p>capital: {country.capital}</p>
+                    <p>population: {country.population}</p>
+                    <img src={country.flag} alt={`National flag of ${country.name}`} width="200px" border="1px solid black"></img>
+
+                </div>
+            );
+        } else if (1 < currentCountries.length && currentCountries.length < 10) {
+            countryListOrStats = currentCountries.map(c =>
+                <div
+                    key={c.alpha2Code}
+                    onClick={this.handleClick(c.alpha2Code)}
+                    >
+                        {c.name}
+                    </div>
+                );
+        } else if (currentCountries.length >= 10) {
+            countryListOrStats = <div>too many matches, specify another filter</div>
+        } else {
+            countryListOrStats = <div>no matches, specify another filter</div>
+        }
 
         return (
             <div>
-                <h2>Puhelinluettelo</h2>
+                <h2>Country research</h2>
                 <Filter
                     value={this.state.filter} handleChange={this.handleFilterChange}
                 />
-
-                <h3>Lisää uusi</h3>
-                <form onSubmit={this.setNameAndNumber}>
-                    <div>
-                        nimi:   <input
-                                    value={this.state.newName} onChange={this.handleNameChange}
-                                />
-                    </div>
-                    <div>
-                        numero: <input
-                                    value={this.state.newPhone} onChange={this.handlePhoneChange}
-                                />
-                    </div>
-                    <div>
-                        <button type="submit">
-                            lisää
-                        </button>
-                    </div>
-                </form>
-                <h3>Numerot</h3>
-                <table>
-                <tbody>{namesToShow}</tbody>
-                </table>
+                {countryListOrStats}
             </div>
         )
     }
