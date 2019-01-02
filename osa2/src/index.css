@@ -1,0 +1,20 @@
+.success {
+    width: 70%;
+    background-color: green;
+    color: white;
+    border: 3px solid white;
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+.error {
+    width: 70%;
+    background-color: red;
+    color: white;
+    border: 3px solid white;
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}

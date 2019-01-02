@@ -1,6 +1,7 @@
 import React from 'react';
 import Person from './components/Person';
 import Filter from './components/Filter';
+import Notification from './components/Notification';
 import dbService from './services/personsdb';
 
 class App extends React.Component {
@@ -10,6 +11,8 @@ class App extends React.Component {
         newName: '',
         newPhone: '',
         filter: '',
+        successMsg: null,
+        successStatus: null,
     };
 
     componentDidMount = () => {
@@ -18,6 +21,31 @@ class App extends React.Component {
             this.setState({ persons });
         });
     };
+
+    tryAddingUser = (pObject) => {
+        dbService.create(pObject)
+        .then((person) => {
+            const persons = this.state.persons.concat(person);
+            this.setState(
+                {
+                    persons,
+                    newName: '',
+                    newPhone: '',
+                    successMsg: `${person.name} onnistuneesti lisätty`,
+                    successStatus: 'success',
+                }
+            );
+            setTimeout(() => {
+                this.setState({ successMsg: null, successStatus: null, });
+            }, 3500);
+        })
+        .catch((error) => {
+            this.setState({ successMsg: 'lisääminen epäonnistui, valitan', successStatus: 'error', });
+            setTimeout(() => {
+                this.setState({ successMsg: null, successStatus: null, });
+            }, 3500);
+        });
+    }
 
     setNameAndNumber = (event) => {
         event.preventDefault();
@@ -30,12 +58,8 @@ class App extends React.Component {
                                     name: this.state.newName,
                                     phone: this.state.newPhone,
                                 };
-            dbService.create(newPerson)
-            .then((person) => {
-                const persons = this.state.persons.concat(person);
-                this.setState({ persons, newName: '', newPhone: '' });
-            });
-        } else {
+            this.tryAddingUser(newPerson);
+        } else { // offer to change the current phone number of the persion
             if (window.confirm(`${name2Add} on jo luettelossa, korvataanko vanha numero uudella?`)) {
                 const newPerson =   {
                                         ...existingPerson,
@@ -48,7 +72,36 @@ class App extends React.Component {
                         persons: persons.concat(changedPerson),
                         newName: '',
                         newPhone: '',
+                        successMsg: `puhelinnumero hlölle: ${name2Add} onnistuneesti muutettu`,
+                        successStatus: 'success',
                     });
+                    setTimeout(() => {
+                        this.setState({ successMsg: null, sucessStatus: null, });
+                    }, 3500);
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        if (error.response.status === 404) { // user was deleted elsewhere!
+                            // first update to current state:
+                            dbService.getAll()
+                            .then((persons) => {
+                                this.setState({ persons });
+                            });
+                            this.tryAddingUser(newPerson);
+                        }
+                        else {
+                            this.setState({ successMsg: 'oudohko virhe, ei onnistunut', successStatus: 'error', });
+                            setTimeout(() => {
+                                this.setState({ successMsg: null, successStatus: null, });
+                            }, 3500);
+                        }
+                    }
+                    else {
+                        this.setState({ successMsg: 'oudohko virhe, ei onnistunut', successStatus: 'error', });
+                        setTimeout(() => {
+                            this.setState({ successMsg: null, successStatus: null, });
+                        }, 3500);
+                    }
                 });
             }
         };
@@ -75,8 +128,20 @@ class App extends React.Component {
                         persons: this.state.persons.filter((p) => {
                             return p.id !== id;
                         }),
+                        successMsg: `${name} onnistuneesti poistettu`,
+                        successStatus: 'success',
                     }
                 );
+                setTimeout(() => {
+                    this.setState({ successMsg: null, successStatus: null, });
+                }, 3500);
+            })
+            .catch((error) => {
+                console.log('error: ', error);
+                this.setState({ successMsg: 'error', successStatus: 'error', });
+                setTimeout(() => {
+                    this.setState({ successMsg: null, successStatus: null, });
+                }, 3500);
             });
         }
     };
@@ -107,6 +172,7 @@ class App extends React.Component {
                 />
 
                 <h3>Lisää uusi</h3>
+                <Notification message={this.state.successMsg} className={this.state.successStatus} />
                 <form onSubmit={this.setNameAndNumber}>
                     <div>
                         nimi:   <input
