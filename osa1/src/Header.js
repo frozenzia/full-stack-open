@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Header = ({ courseName }) => {
+const Header = ({ headerText }) => {
     return (
-        <h1>{courseName}</h1>
+        <h1>{headerText}</h1>
     );
 };
 
 Header.propTypes = {
-    courseName: PropTypes.string.isRequired,
+    headerText: PropTypes.string.isRequired,
 };
 
 export default Header;
