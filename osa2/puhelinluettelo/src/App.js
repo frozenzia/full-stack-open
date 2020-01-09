@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import axios from 'axios';
 
 import Filter from './components/Filter';
 import AddUserForm from './components/AddUserForm';
@@ -15,12 +16,18 @@ const useFocus = () => {
 
 const App = () => {
     const [ nameInputRef, setNameInputFocus ] = useFocus();
-    const [ persons, setPersons ] = useState([
-        { name: 'Arto Hellas', phone: '040-1234567' }
-    ])
+    const [ persons, setPersons ] = useState([])
     const [ newName, setNewName ] = useState('')
     const [ newNumber, setNewNumber ] = useState('')
     const [ newFilter, setNewFilter ] = useState('')
+
+    useEffect(() => {
+        axios
+            .get('http://localhost:3001/persons')
+            .then((resp) => {
+                setPersons(resp.data);
+            })
+    }, []); // <-- '[]' here indicates to run the effect only after 1st render
 
     const handleAddName = (event) => {
         event.preventDefault();
