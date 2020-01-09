@@ -17,6 +17,11 @@ function App() {
 
     const handleFilterChange = (event) => setCountryFilter(event.target.value);
 
+    const handleShowCountry = (country) => {
+        console.log('handleShowCountry called, country is: ', country);
+        setCountryFilter(country.name);
+    }
+
     return (
         <div className="App">
             <Filter
@@ -27,6 +32,7 @@ function App() {
             <Countries
                 countries={countries}
                 filterString={countryFilter}
+                onShowCountryClicked={handleShowCountry}
             />
         </div>
     );
