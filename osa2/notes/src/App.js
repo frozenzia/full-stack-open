@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 
 import Note from './components/Note'
-
+import noteService from './services/notes';
 
 const App = (props) => {
     const [notes, setNotes] = useState([])
@@ -11,14 +10,33 @@ const App = (props) => {
 
     useEffect(() => {
         console.log('effect');
-        axios
-            .get('http://localhost:3001/notes')
-            .then((resp) => {
+        noteService
+            .getAll()
+            .then((allNotes) => {
                 console.log('promise fulfilled');
-                setNotes(resp.data);
+                setNotes(allNotes);
             });
     }, []) // <-- '[]' so effect is run only after 1st render
     console.log('render', notes.length, ' notes');
+
+    const toggleImportanceOf = id => {
+        console.log('importance of ', id, ' needs to be toggled');
+        const note = notes.find(n => n.id === id)
+        const changedNote = { ...note, important: !note.important }
+
+        noteService
+            .update(id, changedNote)
+            .then(changedNoteFromServer => {
+                setNotes(notes
+                    .map(note => note.id !== id ? note : changedNoteFromServer)
+                )
+            })
+            .catch(() => {
+                alert(`note '${changedNote.content}' already deleted from server`);
+                setNotes(notes.filter(note => note.id !== id)); // remove note with id = id
+            })
+
+    }
 
     const notesToShow = showAll
         ? notes
@@ -28,6 +46,7 @@ const App = (props) => {
         <Note
             key={note.id}
             note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)}
         />
     )
 
@@ -42,11 +61,13 @@ const App = (props) => {
             content: newNote,
             date: new Date().toISOString(),
             important: Math.random() > 0.5,
-            id: notes.length + 1,
         }
-
-        setNotes(notes.concat(noteObject))
-        setNewNote('')
+        noteService
+            .create(noteObject)
+            .then(createdNote => {
+                setNotes(notes.concat(createdNote))
+                setNewNote('')
+            });
     }
 
     return (
