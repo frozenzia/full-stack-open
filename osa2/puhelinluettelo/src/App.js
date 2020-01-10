@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import axios from 'axios';
 
+import personService from './services/persons';
 import Filter from './components/Filter';
 import AddUserForm from './components/AddUserForm';
 import Persons from './components/Persons';
@@ -22,24 +22,47 @@ const App = () => {
     const [ newFilter, setNewFilter ] = useState('')
 
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/persons')
-            .then((resp) => {
-                setPersons(resp.data);
+        personService
+            .getAll()
+            .then((allPersons) => {
+                setPersons(allPersons);
             })
     }, []); // <-- '[]' here indicates to run the effect only after 1st render
+
+    const handleNameDelete = (id) => {
+        const { name } = persons.find(p => p.id === id);
+        if (window.confirm(`Delete ${name}?`)) {
+            personService
+            .destroy(id)
+            .then(() => {
+                setPersons(persons.filter(p => p.id !== id));
+            });
+        }
+    }
 
     const handleAddName = (event) => {
         event.preventDefault();
 
         const currentNames = persons.map(p => p.name);
         if (currentNames.includes(newName)) {
-            alert(`${newName} is already added to the phonebook`)
+            if (window.confirm(`${newName} is already here, shall we replace the old number with the new one?`)) {
+                const index = persons.findIndex(p => p.name === newName);
+                const id = persons[index].id;
+                personService
+                    .update(id, ({ ...persons[index], phone: newNumber }))
+                    .then((newPerson) => {
+                        setPersons(persons.map((p) => p.id !== id ? p : newPerson));
+                    });
+            }
         } else {
-            setPersons(persons.concat({ name: newName, phone: newNumber }));
-            setNewName('');
-            setNewNumber('');
-            setNameInputFocus();
+            personService
+                .create({ name: newName, phone: newNumber })
+                .then((createdPerson) => {
+                    setPersons(persons.concat(createdPerson));
+                    setNewName('');
+                    setNewNumber('');
+                    setNameInputFocus();
+                });
         }
     }
 
@@ -63,7 +86,7 @@ const App = () => {
             />
 
             <h2>Numbers</h2>
-            <Persons persons={persons} filterString={newFilter} />
+            <Persons persons={persons} filterString={newFilter} onPersonDelete={handleNameDelete} />
         </div>
     )
 }
