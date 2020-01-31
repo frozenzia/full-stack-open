@@ -8,7 +8,7 @@ const Persons = ({ persons, filterString, onPersonDelete }) => {
         : persons.filter((person) => person.name.toLowerCase().includes(filterString.toLowerCase()))
         return personsToMap
             .map(person =>
-                <p key={person.name}>
+                <p key={person.id}>
                     {person.name} {person.phone}
                     <button onClick={() => onPersonDelete(person.id)}>delete</button>
                 </p>
