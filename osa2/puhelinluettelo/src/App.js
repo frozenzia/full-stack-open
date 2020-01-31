@@ -77,6 +77,9 @@ const App = () => {
                     setNewName('');
                     setNewNumber('');
                     setNameInputFocus();
+                })
+                .catch((error) => {
+                    showActionResult(error.response.data.error, false);
                 });
         }
     }
