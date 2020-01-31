@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors');
 const bodyParser = require('body-parser')
 
+const errorHandler = require('./errorHandler');
 const Note = require('./models/note');
 
 const app = express();
@@ -41,11 +42,16 @@ app.get('/api/notes', (req, res) => {
     });
 })
 
-app.get('/api/notes/:id', (req, res) => {
+app.get('/api/notes/:id', (req, res, next) => {
   Note.findById(req.params.id)
     .then(note => {
-      res.json(note.toJSON())
+      if (note) {
+        res.json(note.toJSON())
+      } else {
+        res.status(404).end()
+      }
     })
+    .catch(error => next(error));
 })
 
 app.post('/api/notes', (req,res) => {
@@ -65,13 +71,26 @@ app.post('/api/notes', (req,res) => {
   })
 })
 
-app.delete('/api/notes/:id', (req, res) => {
-  const id = Number(req.params.id)
-  notes = notes.filter(n => n.id !== id)
-  res.status(204).end()
+app.delete('/api/notes/:id', (req, res, next) => {
+  Note.findByIdAndRemove(req.params.id)
+    .then(() => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
+})
+
+app.put('/api/notes/:id', (req, res, next) => {
+  const body = req.body;
+  Note.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    .then((resp) => {
+      res.json(resp.toJSON())
+    })
+    .catch(error => next(error))
 })
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+app.use(errorHandler);

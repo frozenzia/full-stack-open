@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+// Make Mongoose use `findOneAndUpdate()`. Note that this option is `true`
+// by default, you need to set it to false.
+mongoose.set('useFindAndModify', false);
+
 const url = process.env.MONGODB_URI
 
 console.log('connecting to: ', url);
