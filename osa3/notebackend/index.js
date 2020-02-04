@@ -58,7 +58,6 @@ app.delete('/api/notes/:id', (req, res, next) => {
 })
 
 app.put('/api/notes/:id', (req, res, next) => {
-  const body = req.body;
   Note.findByIdAndUpdate(req.params.id, req.body, { new: true })
     .then((resp) => {
       res.json(resp.toJSON())
