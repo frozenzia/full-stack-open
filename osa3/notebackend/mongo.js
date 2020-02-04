@@ -33,6 +33,6 @@ const Note = mongoose.model('Note', noteSchema); // store in collection 'notes' 
 
 Note.find({ important: true })
   .then(result => {
-      result.forEach(note => {console.log('note: ', note);});
-      mongoose.connection.close();
+    result.forEach(note => {console.log('note: ', note);});
+    mongoose.connection.close();
   });
