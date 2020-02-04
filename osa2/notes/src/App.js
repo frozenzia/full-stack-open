@@ -26,15 +26,12 @@ const App = (props) => {
     const [errorMessage, setErrorMessage] = useState(null)
 
     useEffect(() => {
-        console.log('effect');
         noteService
             .getAll()
             .then((allNotes) => {
-                console.log('promise fulfilled');
                 setNotes(allNotes);
             });
     }, []) // <-- '[]' so effect is run only after 1st render
-    console.log('render', notes.length, ' notes');
 
     const toggleImportanceOf = id => {
         console.log('importance of ', id, ' needs to be toggled');

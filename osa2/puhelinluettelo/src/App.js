@@ -71,9 +71,9 @@ const App = () => {
         } else {
             personService
                 .create({ name: newName, phone: newNumber })
-                .then((allPersons) => {
+                .then((addedPerson) => {
                     showActionResult(`Added ${newName}`, true);
-                    setPersons(allPersons);
+                    setPersons(persons.concat(addedPerson));
                     setNewName('');
                     setNewNumber('');
                     setNameInputFocus();
