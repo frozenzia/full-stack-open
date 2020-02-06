@@ -1,3 +1,15 @@
+const requestLogger = (req, res, next) => {
+  console.log('method: ', req.method);
+  console.log('path: ', req.path);
+  console.log('body: ', req.body);
+  console.log('---');
+  next();
+}
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' })
+}
+
 const errorHandler = (error, request, response, next) => {
   console.error('in the errorHandler!', error.message)
 
@@ -10,4 +22,8 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
-module.exports = errorHandler;
+module.exports = {
+  requestLogger,
+  unknownEndpoint,
+  errorHandler,
+};
