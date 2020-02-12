@@ -1,10 +1,25 @@
 const mongoose = require('mongoose');
 
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
+const blogSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    minlength: 3,
+    required: true,
+  },
+  author: {
+    type: String,
+    minlength: 3,
+    required: false,
+  },
+  url: {
+    type: String,
+    minlength: 10,
+    required: true,
+  },
+  likes: {
+    type: Number,
+    required: false,
+  }
 })
 
 // const noteSchema = new mongoose.Schema({
@@ -19,6 +34,7 @@ const blogSchema = mongoose.Schema({
 //   },
 //   important: Boolean,
 // });
+
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
