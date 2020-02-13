@@ -4,7 +4,7 @@
   "description": "Bloglist app for part4 of full-stack-open course",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --verbose",
     "server": "node ./src/index.js",
     "watch": "nodemon ./src/index.js"
   },
@@ -19,6 +19,10 @@
   },
   "devDependencies": {
     "eslint": "^6.8.0",
+    "jest": "^25.1.0",
     "nodemon": "^2.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
