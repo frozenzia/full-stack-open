@@ -58,17 +58,32 @@ describe('mostBlogs', () => {
   it('of empty array is {}', () => {
     expect(listHelper.mostBlogs([])).toEqual({});
   });
+  it('of array with single item is object with that item\'s `author`, and `blogs` set to 1', () => {
+    const singleItemArray = [sampleBlogs[1]]; // no likes at all
+    expect(listHelper.mostBlogs(singleItemArray)).toEqual({ author: sampleBlogs[1].author, blogs: 1 });
+  });
+  const largerSampleBlogs = [...sampleBlogs, ...sampleBlogs, sampleBlogs[0], sampleBlogs[1]];
+  // "haa" and "hoo" authors should both have 3 blogs, haa comes 1st, so...
+  it('of array with multiple items calculates correctly', () => {
+    expect(listHelper.mostBlogs(largerSampleBlogs)).toEqual({ author: 'haa', blogs: 3 });
+  });
+});
+
+describe('mostLikes', () => {
+  it('of empty array is {}', () => {
+    expect(listHelper.mostLikes([])).toEqual({});
+  });
   it('of array with single item is that item, but only with `author` and `likes` keys, WITH `likes` key present', () => {
     const singleItemArray = [sampleBlogs[1]]; // no likes at all
-    expect(listHelper.mostBlogs(singleItemArray)).toEqual({ author: sampleBlogs[1].author, likes: sampleBlogs[1].likes || 0 });
+    expect(listHelper.mostLikes(singleItemArray)).toEqual({ author: sampleBlogs[1].author, likes: sampleBlogs[1].likes || 0 });
   });
   it('of array with single item is that item, but only with `author` and `likes` keys, WITHOUT `likes` key present', () => {
     const singleItemArray = [sampleBlogs[2]]; // no likes at all
-    expect(listHelper.mostBlogs(singleItemArray)).toEqual({ author: sampleBlogs[2].author, likes: sampleBlogs[2].likes || 0 });
+    expect(listHelper.mostLikes(singleItemArray)).toEqual({ author: sampleBlogs[2].author, likes: sampleBlogs[2].likes || 0 });
   });
   const largerSampleBlogs = [...sampleBlogs, ...sampleBlogs, sampleBlogs[0], sampleBlogs[1]];
-  // haa and huu authors should both have 3 blogs
+  // "haa" and "hoo" authors should both have 3 blogs, but "hoo" should have 6 likes
   it('of array with multiple items calculates correctly', () => {
-    expect(listHelper.mostBlogs(largerSampleBlogs)).toEqual({ author: 'haa', likes: 3 });
+    expect(listHelper.mostLikes(largerSampleBlogs)).toEqual({ author: 'hoo', likes: 6 });
   });
 });
