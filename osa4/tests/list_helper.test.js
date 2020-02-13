@@ -53,3 +53,22 @@ describe('favoriteBlog', () => {
     expect(listHelper.favoriteBlog(sampleBlogs)).toEqual(sampleBlogs[1]);
   });
 });
+
+describe('mostBlogs', () => {
+  it('of empty array is {}', () => {
+    expect(listHelper.mostBlogs([])).toEqual({});
+  });
+  it('of array with single item is that item, but only with `author` and `likes` keys, WITH `likes` key present', () => {
+    const singleItemArray = [sampleBlogs[1]]; // no likes at all
+    expect(listHelper.mostBlogs(singleItemArray)).toEqual({ author: sampleBlogs[1].author, likes: sampleBlogs[1].likes || 0 });
+  });
+  it('of array with single item is that item, but only with `author` and `likes` keys, WITHOUT `likes` key present', () => {
+    const singleItemArray = [sampleBlogs[2]]; // no likes at all
+    expect(listHelper.mostBlogs(singleItemArray)).toEqual({ author: sampleBlogs[2].author, likes: sampleBlogs[2].likes || 0 });
+  });
+  const largerSampleBlogs = [...sampleBlogs, ...sampleBlogs, sampleBlogs[0], sampleBlogs[1]];
+  // haa and huu authors should both have 3 blogs
+  it('of array with multiple items calculates correctly', () => {
+    expect(listHelper.mostBlogs(largerSampleBlogs)).toEqual({ author: 'haa', likes: 3 });
+  });
+});
