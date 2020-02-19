@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const config = require('./utils/config');
 const notesRouter = require('./controllers/notes');
+const logger = require('./utils/logger');
 const middleware = require('./utils/middleware');
 // const errorHandler = require('./errorHandler');
 
@@ -12,13 +13,13 @@ const middleware = require('./utils/middleware');
 // by default, you need to set it to false.
 mongoose.set('useFindAndModify', false);
 
-console.log('connecting to: ', config.MONGODB_URI);
+logger.info('connecting to: ', config.MONGODB_URI);
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    console.log('connected to MongoDB');
+    logger.info('connected to MongoDB');
   })
   .catch((error) => {
-    console.log('error connecting to MongoDB, error: ', error.message);
+    logger.error('error connecting to MongoDB, error: ', error.message);
   });
 
 const app = express();
