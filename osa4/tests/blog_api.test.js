@@ -110,6 +110,36 @@ it('responds with "400 Bad request" if trying to add a blog without a title and 
     .expect(400)
 });
 
+it('succeeds in deleting a specific blog', async () => {
+  const response = await api
+    .get('/api/blogs');
+  const blogToDelete = response.body[0];
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204);
+  const response2 = await api
+    .get('/api/blogs');
+  expect(response2.body.length).toEqual(initialBlogs.length - 1);
+});
+
+it('succeeds in editing "likes" field for a specific blog', async () => {
+  const response = await api
+    .get('/api/blogs');
+  const blogToEdit = response.body[0];
+  const id = blogToEdit.id;
+  const editedBlog = new Blog(blogToEdit);
+  editedBlog.likes += 1;
+  await api
+    .put(`/api/blogs/${blogToEdit.id}`)
+    .send(editedBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/);
+  const response2 = await api
+    .get('/api/blogs');
+  const blogs = response2.body;
+  expect(blogs[blogs.findIndex(b => b.id === id)].likes).toEqual(blogToEdit.likes + 1);
+});
+
 afterAll(() => {
   mongoose.connection.close()
 })
