@@ -93,6 +93,23 @@ it('fills in value 0 if no "likes" field is included when adding a blog to the d
   expect(response.body[addedBlogIndex].likes).toEqual(0);
 });
 
+it('responds with "400 Bad request" if trying to add a blog without a title and an url', async () => {
+  const titlelessBlog = new Blog({
+    url: 'www.fi.fi.fi.fi.fi.fi.fi',
+  });
+  const urllessBlog = new Blog({
+    title: 'Lonely writer',
+  });
+  await api
+    .post('/api/blogs')
+    .send(titlelessBlog)
+    .expect(400)
+  await api
+    .post('/api/blogs')
+    .send(urllessBlog)
+    .expect(400)
+});
+
 afterAll(() => {
   mongoose.connection.close()
 })
