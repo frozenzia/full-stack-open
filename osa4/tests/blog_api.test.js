@@ -75,6 +75,23 @@ it('can add a blog to the database', async () => {
   expect(titles).toContain('Lonely writer');
 });
 
+it('fills in value 0 if no "likes" field is included when adding a blog to the database', async () => {
+  const newBlog = new Blog({
+    title: 'Lonely writer',
+    url: 'www.fi.fi.fi.fi.fi.fi.fi',
+  });
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+  const response = await api
+    .get('/api/blogs')
+  const titles = response.body.map(b => b.title);
+  const addedBlogIndex = titles.indexOf('Lonely writer');
+  expect(response.body[addedBlogIndex].likes).toBeDefined();
+  expect(response.body[addedBlogIndex].likes).toEqual(0);
+});
 
 afterAll(() => {
   mongoose.connection.close()
