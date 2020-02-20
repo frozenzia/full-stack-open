@@ -4,9 +4,9 @@
   "description": "Bloglist app for part4 of full-stack-open course",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose",
-    "server": "node ./src/index.js",
-    "watch": "nodemon ./src/index.js"
+    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "server": "NODE_ENV=production node ./src/index.js",
+    "watch": "NODE_ENV=development nodemon ./src/index.js"
   },
   "author": "Paul Vinson BROWN",
   "license": "MIT",
@@ -20,7 +20,8 @@
   "devDependencies": {
     "eslint": "^6.8.0",
     "jest": "^25.1.0",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "supertest": "^4.0.2"
   },
   "jest": {
     "testEnvironment": "node"
