@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const config = require('./utils/config');
 const notesRouter = require('./controllers/notes');
+const usersRouter = require('./controllers/users');
 const logger = require('./utils/logger');
 const middleware = require('./utils/middleware');
 // const errorHandler = require('./errorHandler');
@@ -12,6 +13,7 @@ const middleware = require('./utils/middleware');
 // Make Mongoose use `findOneAndUpdate()`. Note that this option is `true`
 // by default, you need to set it to false.
 mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 logger.info('connecting to: ', config.MONGODB_URI);
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -29,6 +31,7 @@ app.use(bodyParser.json())
 app.use(middleware.requestLogger);
 
 app.use('/api/notes', notesRouter)
+app.use('/api/users', usersRouter)
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
