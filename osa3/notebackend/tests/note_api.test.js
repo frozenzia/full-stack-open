@@ -3,11 +3,14 @@ const supertest = require('supertest')
 
 const app = require('../app')
 const Note = require('../models/note');
+const User = require('../models/user');
 const helper = require('./test_helper');
 
 const initialNotes = helper.initialNotes;
 
 const api = supertest(app)
+
+let token = null;
 
 describe('WHEN there are initially some notes saved', () => {
   beforeEach(async () => {
@@ -21,6 +24,25 @@ describe('WHEN there are initially some notes saved', () => {
       await noteObject.save();
     }
 
+    // For note creation (and later deletion), we must first log in
+    // in order to get a token, which will be used during note creation.
+    // empty User database and create a new user
+    await User.deleteMany({});
+    const user = { username: 'temp', password: 'something' };
+
+    await api
+      .post('/api/users')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // now log in
+    const resp = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+    token = resp.body.token;
   });
 
   test('notes are returned as json', async () => {
@@ -80,6 +102,7 @@ describe('WHEN there are initially some notes saved', () => {
       };
       await api
         .post('/api/notes')
+        .set('Authorization', `bearer ${token}`)
         .send(newNote)
         .expect(200)
         .expect('Content-Type', /application\/json/)
@@ -97,6 +120,7 @@ describe('WHEN there are initially some notes saved', () => {
       };
       await api
         .post('/api/notes')
+        .set('Authorization', `bearer ${token}`)
         .send(newNote)
         .expect(400)
 
