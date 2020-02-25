@@ -2,6 +2,7 @@ const usersRouter = require('express').Router();
 const bcrypt = require('bcrypt');
 
 const User = require('../models/user');
+const userConstants = require('../models/userConstants');
 
 usersRouter.get('/', async (request, response, next) => {
   try {
@@ -14,6 +15,10 @@ usersRouter.get('/', async (request, response, next) => {
 
 usersRouter.post('/', async ({ body }, response, next) => {
   try {
+    if(body.password.length < userConstants.MIN_PASSWORD_LENGTH) {
+      return response.status(401).json({ error: `Password must be at least ${userConstants.MIN_PASSWORD_LENGTH} characters long` });
+    }
+
     const newUser = {
       ...body
     };
