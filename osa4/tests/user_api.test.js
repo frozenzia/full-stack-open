@@ -3,6 +3,7 @@ const supertest = require('supertest')
 
 const app = require('../src/app')
 const User = require('../models/user');
+const Blog = require('../models/blog');
 const userConstants = require('../models/userConstants');
 const helper = require('./test_helper');
 
@@ -24,8 +25,9 @@ const genericUser = {
 
 
 beforeEach(async () => {
-  // empty db
+  // empty dbs
   await User.deleteMany({});
+  await Blog.deleteMany({});
 
   // populate db
   // let userObject = null;
@@ -59,8 +61,8 @@ it('can add a user to the database', async () => {
     .expect('Content-Type', /application\/json/);
   const usersAfter = await helper.usersInDb()
   expect(usersAfter.length).toEqual(1);
-  const usernames = usersAfter.map(b => b.username);
-  expect(usernames).toContain(genericUser.username);
+  expect(usersAfter[0].username).toContain(genericUser.username);
+  expect(usersAfter[0].blogs).toBeDefined();
 });
 
 it('responds with "401 Unauthorized" and proper error if trying to add a user with too short a password', async () => {
@@ -99,6 +101,26 @@ it('responds with "400 Bad Request" and proper error if trying to add a user wit
   expect(result.body.error).toContain(`Error, expected \`username\` to be unique.`);
 });
 
+test('fetching users returns a list that has also populated the blogs section of a user', async () => {
+  // create single, generic user to db
+  await api
+    .post('/api/users')
+    .send(genericUser);
+
+  // create a blog which will be assigned to the 1st (and only) user in the db
+  const newBlog = {
+    title: 'Lonely writer',
+    author: 'SpedeSpede',
+    url: 'www.fi.fi.fi.fi.fi.fi.fi',
+    likes: 8,
+  };
+  const addedBlogResponse = await api.post('/api/blogs').send(newBlog);
+  const blogId = addedBlogResponse.body.id.toString();
+  const users = await api
+    .get('/api/users');
+  expect(users.body[0].blogs[0].title).toEqual(newBlog.title);
+  expect(users.body[0].blogs[0].id).toEqual(blogId);
+})
 
 // it('succeeds in deleting a specific user', async () => {
 //   const response = await api

@@ -3,6 +3,7 @@ const supertest = require('supertest')
 
 const app = require('../src/app')
 const Blog = require('../models/blog');
+const User = require('../models/user');
 // const helper = require('./test_helper');
 
 const api = supertest(app)
@@ -27,19 +28,24 @@ const initialBlogs = [
     likes: 1,
   },
 ];
-
+const genericUser = {
+  name: 'Ben',
+  username: 'bstiller',
+  password: 'benIsBest',
+};
 
 beforeEach(async () => {
-  // empty db
+  // empty dbs
   await Blog.deleteMany({});
+  await User.deleteMany({});
 
-  // populate db
+  // populate dbs
   let blogObject = null;
   for (let blog of initialBlogs) {
     blogObject = new Blog(blog);
     await blogObject.save();
   }
-
+  await api.post('/api/users').send(genericUser);
 });
 
 it('get /api/blogs gives a list of all the blogs on record', async () => {
@@ -57,22 +63,44 @@ it('blogs returned have a field "id" (not "_id")', async () => {
 });
 
 it('can add a blog to the database', async () => {
-  const newBlog = new Blog({
+  const newBlog = {
     title: 'Lonely writer',
     author: 'SpedeSpede',
     url: 'www.fi.fi.fi.fi.fi.fi.fi',
     likes: 8,
-  });
-  await api
+  };
+  const addedBlogResponse = await api
     .post('/api/blogs')
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/);
+  const addedBlogId = addedBlogResponse.body.id;
   const response = await api
     .get('/api/blogs')
   expect(response.body.length).toEqual(initialBlogs.length + 1);
   const titles = response.body.map(b => b.title);
   expect(titles).toContain('Lonely writer');
+  const lastBlog = response.body[response.body.length - 1];
+  expect(lastBlog.user).toBeDefined();
+  const user = await User.findById(lastBlog.user.id);
+  expect(user.username).toEqual(genericUser.username);
+  const blogsAsStrings = user.blogs.map(b => b.toString());
+  expect(blogsAsStrings).toContain(addedBlogId.toString());
+});
+
+it('blogs returned, if they have user info, will list username, name and id of users', async () => {
+  // want to add at least one blog with the api, so that
+  // it gets user info
+  const newBlog = { ...initialBlogs[0] };
+  newBlog.likes = 50;
+  await api.post('/api/blogs').send(newBlog);
+  const response = await api.get('/api/blogs')
+  const lastBlog = response.body[response.body.length - 1];
+  expect(lastBlog.user).toBeDefined();
+  expect(lastBlog.user.username).toBeDefined();
+  expect(lastBlog.user.name).toBeDefined();
+  expect(lastBlog.user.id).toBeDefined();
+  expect(response.body[0].id).toBeDefined();
 });
 
 it('fills in value 0 if no "likes" field is included when adding a blog to the database', async () => {
