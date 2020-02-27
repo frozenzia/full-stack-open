@@ -33,6 +33,7 @@ const genericUser = {
   username: 'bstiller',
   password: 'benIsBest',
 };
+let token = null;
 
 beforeEach(async () => {
   // empty dbs
@@ -40,12 +41,16 @@ beforeEach(async () => {
   await User.deleteMany({});
 
   // populate dbs
+  // initial blogs
   let blogObject = null;
   for (let blog of initialBlogs) {
     blogObject = new Blog(blog);
     await blogObject.save();
   }
+  // initial user exists and logs in...
   await api.post('/api/users').send(genericUser);
+  const resp = await api.post('/api/login').send(genericUser);
+  token = resp.body.token;
 });
 
 it('get /api/blogs gives a list of all the blogs on record', async () => {
@@ -62,7 +67,7 @@ it('blogs returned have a field "id" (not "_id")', async () => {
   expect(response.body[0].id).toBeDefined();
 });
 
-it('can add a blog to the database', async () => {
+it('canNOT add a blog to the database if it does NOT include token in header', async () => {
   const newBlog = {
     title: 'Lonely writer',
     author: 'SpedeSpede',
@@ -71,6 +76,22 @@ it('can add a blog to the database', async () => {
   };
   const addedBlogResponse = await api
     .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+    .expect('Content-Type', /application\/json/);
+  expect(addedBlogResponse.body.error).toEqual('token missing or invalid');
+});
+
+it('can add a blog to the database IF it includes token in header', async () => {
+  const newBlog = {
+    title: 'Lonely writer',
+    author: 'SpedeSpede',
+    url: 'www.fi.fi.fi.fi.fi.fi.fi',
+    likes: 8,
+  };
+  const addedBlogResponse = await api
+    .post('/api/blogs')
+    .set('Authorization', `bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/);
@@ -93,7 +114,10 @@ it('blogs returned, if they have user info, will list username, name and id of u
   // it gets user info
   const newBlog = { ...initialBlogs[0] };
   newBlog.likes = 50;
-  await api.post('/api/blogs').send(newBlog);
+  await api
+    .post('/api/blogs')
+    .set('Authorization', `bearer ${token}`)
+    .send(newBlog);
   const response = await api.get('/api/blogs')
   const lastBlog = response.body[response.body.length - 1];
   expect(lastBlog.user).toBeDefined();
@@ -110,6 +134,7 @@ it('fills in value 0 if no "likes" field is included when adding a blog to the d
   });
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/);
@@ -130,10 +155,12 @@ it('responds with "400 Bad request" if trying to add a blog without a title and 
   });
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${token}`)
     .send(titlelessBlog)
     .expect(400)
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${token}`)
     .send(urllessBlog)
     .expect(400)
 });

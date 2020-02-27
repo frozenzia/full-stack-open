@@ -23,7 +23,6 @@ const genericUser = {
   password: 'speedygonzales',
 };
 
-
 beforeEach(async () => {
   // empty dbs
   await User.deleteMany({});
@@ -106,6 +105,9 @@ test('fetching users returns a list that has also populated the blogs section of
   await api
     .post('/api/users')
     .send(genericUser);
+  // log him in
+  const resp = await api.post('/api/login').send(genericUser);
+  const token = resp.body.token;
 
   // create a blog which will be assigned to the 1st (and only) user in the db
   const newBlog = {
@@ -114,7 +116,10 @@ test('fetching users returns a list that has also populated the blogs section of
     url: 'www.fi.fi.fi.fi.fi.fi.fi',
     likes: 8,
   };
-  const addedBlogResponse = await api.post('/api/blogs').send(newBlog);
+  const addedBlogResponse = await api
+    .post('/api/blogs')
+    .set('Authorization', `bearer ${token}`)
+    .send(newBlog);
   const blogId = addedBlogResponse.body.id.toString();
   const users = await api
     .get('/api/users');
