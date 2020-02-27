@@ -28,6 +28,12 @@ const initialBlogs = [
     likes: 1,
   },
 ];
+const genericBlog = {
+  title: 'Lonely writer',
+  author: 'SpedeSpede',
+  url: 'www.fi.fi.fi.fi.fi.fi.fi',
+  likes: 8,
+};
 const genericUser = {
   name: 'Ben',
   username: 'bstiller',
@@ -68,31 +74,19 @@ it('blogs returned have a field "id" (not "_id")', async () => {
 });
 
 it('canNOT add a blog to the database if it does NOT include token in header', async () => {
-  const newBlog = {
-    title: 'Lonely writer',
-    author: 'SpedeSpede',
-    url: 'www.fi.fi.fi.fi.fi.fi.fi',
-    likes: 8,
-  };
   const addedBlogResponse = await api
     .post('/api/blogs')
-    .send(newBlog)
+    .send(genericBlog)
     .expect(401)
     .expect('Content-Type', /application\/json/);
   expect(addedBlogResponse.body.error).toEqual('token missing or invalid');
 });
 
 it('can add a blog to the database IF it includes token in header', async () => {
-  const newBlog = {
-    title: 'Lonely writer',
-    author: 'SpedeSpede',
-    url: 'www.fi.fi.fi.fi.fi.fi.fi',
-    likes: 8,
-  };
   const addedBlogResponse = await api
     .post('/api/blogs')
     .set('Authorization', `bearer ${token}`)
-    .send(newBlog)
+    .send(genericBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/);
   const addedBlogId = addedBlogResponse.body.id;
@@ -112,12 +106,10 @@ it('can add a blog to the database IF it includes token in header', async () => 
 it('blogs returned, if they have user info, will list username, name and id of users', async () => {
   // want to add at least one blog with the api, so that
   // it gets user info
-  const newBlog = { ...initialBlogs[0] };
-  newBlog.likes = 50;
   await api
     .post('/api/blogs')
     .set('Authorization', `bearer ${token}`)
-    .send(newBlog);
+    .send(genericBlog);
   const response = await api.get('/api/blogs')
   const lastBlog = response.body[response.body.length - 1];
   expect(lastBlog.user).toBeDefined();
@@ -128,10 +120,8 @@ it('blogs returned, if they have user info, will list username, name and id of u
 });
 
 it('fills in value 0 if no "likes" field is included when adding a blog to the database', async () => {
-  const newBlog = new Blog({
-    title: 'Lonely writer',
-    url: 'www.fi.fi.fi.fi.fi.fi.fi',
-  });
+  const newBlog = { ... genericBlog };
+  delete newBlog.likes;
   await api
     .post('/api/blogs')
     .set('Authorization', `bearer ${token}`)
@@ -141,7 +131,7 @@ it('fills in value 0 if no "likes" field is included when adding a blog to the d
   const response = await api
     .get('/api/blogs')
   const titles = response.body.map(b => b.title);
-  const addedBlogIndex = titles.indexOf('Lonely writer');
+  const addedBlogIndex = titles.indexOf(newBlog.title);
   expect(response.body[addedBlogIndex].likes).toBeDefined();
   expect(response.body[addedBlogIndex].likes).toEqual(0);
 });
@@ -165,16 +155,54 @@ it('responds with "400 Bad request" if trying to add a blog without a title and 
     .expect(400)
 });
 
-it('succeeds in deleting a specific blog', async () => {
+it('FAILS in deleting a specific blog if no token sent', async () => {
   const response = await api
     .get('/api/blogs');
   const blogToDelete = response.body[0];
+  const deletedBlogResponse = await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(401)
+    .expect('Content-Type', /application\/json/);
+
+  expect(deletedBlogResponse.body.error).toEqual('token missing or invalid');
+});
+
+it('FAILS in deleting a specific blog if WRONG token sent', async () => {
+  // we need a blog with a token, so add one for the genericUser...
+  const resp = await api
+    .post('/api/blogs')
+    .set('authorization', `bearer ${token}`)
+    .send(genericBlog);
+  const blogToDelete = resp.body;
+
+  // also need a 2nd user
+  const newUser = { ...genericUser };
+  newUser.username = `${genericUser.username}2`;
+  const resp2 = await api.post('/api/users').send(newUser);
+
+  const deletedBlogResponse = await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('authorization', `bearer ${resp2.token}`)
+    .expect(401)
+    .expect('Content-Type', /application\/json/);
+
+  expect(deletedBlogResponse.body.error).toEqual('invalid token');
+});
+
+it('succeeds in deleting a specific blog when proper token sent', async () => {
+  // we need a blog with a token, so add one for the genericUser...
+  const resp = await api
+    .post('/api/blogs')
+    .set('authorization', `bearer ${token}`)
+    .send(genericBlog);
+  const blogToDelete = resp.body;
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('authorization', `bearer ${token}`)
     .expect(204);
   const response2 = await api
     .get('/api/blogs');
-  expect(response2.body.length).toEqual(initialBlogs.length - 1);
+  expect(response2.body.length).toEqual(initialBlogs.length);
 });
 
 it('succeeds in editing "likes" field for a specific blog', async () => {
