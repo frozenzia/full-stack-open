@@ -8,6 +8,7 @@ const config = require('../utils/config');
 const middleware = require('../utils/middleware');
 const usersRouter = require('../controllers/users');
 const blogsRouter = require('../controllers/blogs');
+const loginRouter = require('../controllers/login');
 
 console.log('connecting to: ', config.MONGODB_URI);
 
@@ -31,6 +32,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(middleware.requestLogger);
 
+app.use('/api/login', loginRouter);
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter);
 
