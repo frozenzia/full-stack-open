@@ -7,6 +7,8 @@ import NoteForm from './components/NoteForm';
 import noteService from './services/notes';
 import loginService from './services/login';
 
+import './App.css';
+
 const Footer = () => {
   const footerStyle = {
     color: 'green',
@@ -109,6 +111,11 @@ const App = (props) => {
     setPassword(text);
   }
 
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedNoteappUser');
+    setUser(null);
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -147,7 +154,14 @@ const App = (props) => {
           />
         :
         <div>
-          <p>{user.name} logged in</p>
+          <div className='loggedIn'>
+            <div>
+              {user.name} logged in
+            </div>
+            <button onClick={handleLogout}>
+              logout
+            </button>
+          </div>
           <NoteForm
             newNote={newNote}
             handleNoteChange={handleNoteChange}
