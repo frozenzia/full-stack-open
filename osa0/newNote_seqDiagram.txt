@@ -1,0 +1,24 @@
+# This is raw code used to create sequence diagram
+# here: https://www.websequencediagrams.com/
+
+title 0.4 new note
+
+User->Browser:
+note right of User: user types new note, presses 'Save'
+Browser->Server: POST <domain>/exampleapp/new_note, w/text in payload
+note left of Server: server pushes a new object to its array of notes\nusing the form data sent and arrival time,\nthen replies with 302
+Server->Browser: 302, go here instead: /exampleapp/notes
+note right of Browser: server is like, "fine then..."
+Browser->Server: GET <domain>/exampleapp/notes
+note left of Server: server serves up static HTML
+Server->Browser: 200 html
+note right of Browser: browser realizes we also need main.css and main.js
+Browser->Server: GET <domain>/exampleapp/main.css
+Browser->Server: GET <domain>/exampleapp/main.js
+Server->Browser: 200 main.css
+Server->Browser: 200 main.js
+note right of Browser: browser starts to execute main.js, which starts\n with wanting data from backend
+Browser->Server: GET <domain>/exampleapp/data.json
+Server->Browser: 200 data.json
+note right of Browser: when data.json is received and OK,\nbrowser creates single LI element for each\nnote in data.json w/the 'content' as the\ntext part. It appends all the LI elements as\nchildren to a new UL element and appends\nthe UL element to the HTML
+note left of Browser: browser renders HTML using stylesheet\nas needed
