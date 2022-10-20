@@ -28,7 +28,7 @@ const App = (props) => {
     const indexWithMostVotes = votes.indexOf([...votes].sort().pop());
 
     return (
-        <div>
+        <>
             <Header headerText='Anecdote of the day' />
             {props.anecdotes[selected]}<br />
             has {votes[selected]} votes<br />
@@ -37,7 +37,7 @@ const App = (props) => {
             <Header headerText='Anecdote with the most votes' />
             {props.anecdotes[indexWithMostVotes]}<br />
             has {votes[indexWithMostVotes]} votes<br />
-        </div>
+        </>
     )
 }
 
