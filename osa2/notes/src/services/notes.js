@@ -21,8 +21,10 @@ const update = (id, newObject) => {
         .then(resp => resp.data)
 }
 
-export default {
+const service = {
     getAll,
     create,
     update
-}
+};
+
+export default service;
