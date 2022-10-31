@@ -1,7 +1,7 @@
 import axios from 'axios'
-// const baseUrl = 'http://localhost:3001/api/notes'
+const baseUrl = 'http://localhost:5001/notes'
 // const baseUrl = 'https://ancient-ocean-58745.herokuapp.com/notes'
-const baseUrl = '/api/notes'
+// const baseUrl = '/api/notes'
 
 const getAll = () => {
     return axios
@@ -21,8 +21,10 @@ const update = (id, newObject) => {
         .then(resp => resp.data)
 }
 
-export default {
+const service = {
     getAll,
     create,
     update
-}
+};
+
+export default service;

@@ -7,7 +7,7 @@ const Countries = ({ countries, filterString, onShowCountryClicked }) => {
     const filterCountries = () => {
         return filterString === ''
         ? countries
-        : countries.filter((country) => country.name.toLowerCase().includes(filterString.toLowerCase()))
+        : countries.filter((country) => country.name.common.toLowerCase().includes(filterString.toLowerCase()))
     }
 
     const filteredCountries = filterCountries();
@@ -17,8 +17,8 @@ const Countries = ({ countries, filterString, onShowCountryClicked }) => {
         return <p>Too many matches, specify another filter</p>
     } else if (filteredCountries.length > 1 || filteredCountries.length === 0) {
         return filteredCountries.map(country => (
-            <div key={country.name}>
-                {country.name} <button onClick={() => onShowCountryClicked(country)}>show</button>
+            <div key={country.name.common}>
+                {country.name.common} <button onClick={() => onShowCountryClicked(country)}>show</button>
             </div>
         ));
     }

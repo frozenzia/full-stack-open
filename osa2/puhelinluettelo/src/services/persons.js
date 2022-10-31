@@ -1,6 +1,6 @@
 import axios from 'axios'
-// const baseUrl = 'http://localhost:3001/api/persons'
-const baseUrl = 'api/persons'
+const baseUrl = 'http://localhost:5001/persons'
+// const baseUrl = 'api/persons'
 
 const getAll = () => {
     return axios
@@ -26,4 +26,6 @@ const destroy = (id) => {
         .then(() => {})
 }
 
-export default { getAll, create, update, destroy };
+const service = { getAll, create, update, destroy };
+
+export default service;
