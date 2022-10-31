@@ -9,7 +9,7 @@ function App() {
     const [countryFilter, setCountryFilter] = useState('');
     useEffect(() => {
         axios
-            .get('https://restcountries.eu/rest/v2/all')
+            .get('https://restcountries.com/v3.1/all')
             .then((resp) => {
                 setCountries(resp.data);
             });
@@ -19,7 +19,7 @@ function App() {
 
     const handleShowCountry = (country) => {
         console.log('handleShowCountry called, country is: ', country);
-        setCountryFilter(country.name);
+        setCountryFilter(country.name.common);
     }
 
     return (
