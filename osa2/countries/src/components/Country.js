@@ -4,21 +4,22 @@ import axios from 'axios';
 
 const Country = ({ country }) => {
     const [weather, setWeather] = useState({});
+    const api_key = process.env.REACT_APP_API_KEY
     useEffect(() => {
         axios
-            .get(`https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&units=metric&APPID=b16e2cabb69361b519ab4bb99ec50f40`)
+            .get(`https://api.openweathermap.org/data/2.5/weather?q=${country.capital[0]}&appid=${api_key}&units=metric`)
             .then((resp) => {
                 console.log('resp: ', resp);
                 setWeather(resp.data)
             })
-    }, [country.capital]); // run any time country.capital changes
+    }, [country.capital, api_key]); // run any time country.capital changes
 
-    const temperature = (weather && weather.main && weather.main.temp) || null;
-    const windSpeed = (weather && weather.wind && weather.wind.speed) || null;
-    const windDirection = (weather && weather.wind && weather.wind.deg) || null;
-    const icon = (weather && weather.weather && `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`) || null;
+    const temperature = (weather.main && weather.main.temp) || null;
+    const windSpeed = (weather.wind && weather.wind.speed) || null;
+    const windDirection = (weather.wind && weather.wind.deg) || null;
+    const icon = (weather.weather && `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`) || null;
     console.log('icon: ', icon);
-    const desc = (weather && weather.weather && weather.weather[0].description) || null;
+    const desc = (weather.weather && weather.weather[0].description) || null;
 
     return (
         <div>
