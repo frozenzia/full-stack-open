@@ -11,11 +11,6 @@ const logger = require('./utils/logger');
 const middleware = require('./utils/middleware');
 // const errorHandler = require('./errorHandler');
 
-// Make Mongoose use `findOneAndUpdate()`. Note that this option is `true`
-// by default, you need to set it to false.
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-
 logger.info('connecting to: ', config.MONGODB_URI);
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {

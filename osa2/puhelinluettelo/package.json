@@ -31,7 +31,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://salty-lake-63457.herokuapp.com/",
+  "proxy": "https://lingering-morning-8001.fly.dev",
   "devDependencies": {
     "json-server": "^0.17.0"
   }

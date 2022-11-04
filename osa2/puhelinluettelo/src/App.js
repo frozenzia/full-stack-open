@@ -64,8 +64,8 @@ const App = () => {
                         showActionResult(`Changed phone number for ${newName} to: ${newNumber}`, true);
                         setPersons(persons.map((p) => p.id !== id ? p : newPerson));
                     })
-                    .catch(() => {
-                        showActionResult(`Data for ${newName} already deleted from server?`, false);
+                    .catch((error) => {
+                        showActionResult(error.response.data.error, false);
                     });
             }
         } else {

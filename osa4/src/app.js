@@ -12,11 +12,6 @@ const loginRouter = require('../controllers/login');
 
 console.log('connecting to: ', config.MONGODB_URI);
 
-// Make Mongoose use `findOneAndUpdate()`. Note that this option
-// is `true` by default, so you need to set it to false.
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('connected to MongoDB');
