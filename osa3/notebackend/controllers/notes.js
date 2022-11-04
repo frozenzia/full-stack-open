@@ -16,14 +16,14 @@ notesRouter.get('/', async (req, res) => {
   const notes = await Note
     .find({})
     .populate('user', { name: 1 });
-  res.json(notes.map(note => note.toJSON()));
+  res.json(notes);
 })
 
 notesRouter.get('/:id', async (req, res, next) => {
   try {
     const note = await Note.findById(req.params.id);
     if (note) {
-      res.json(note.toJSON())
+      res.json(note)
     } else {
       res.status(404).end()
     }
@@ -55,7 +55,7 @@ notesRouter.post('/', async (req, res, next) => {
     const savedNote = await note.save();
     user.notes = user.notes.concat(savedNote._id)
     await user.save();
-    res.json(savedNote.toJSON());
+    res.json(savedNote);
   } catch(exception) {
     next(exception);
   }
@@ -73,7 +73,7 @@ notesRouter.delete('/:id', async (req, res, next) => {
 notesRouter.put('/:id', (req, res, next) => {
   Note.findByIdAndUpdate(req.params.id, req.body, { new: true })
     .then((resp) => {
-      res.json(resp.toJSON())
+      res.json(resp)
     })
     .catch(error => next(error))
 })
