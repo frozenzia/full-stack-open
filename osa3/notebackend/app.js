@@ -13,12 +13,12 @@ const middleware = require('./utils/middleware');
 
 logger.info('connecting to: ', config.MONGODB_URI);
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    logger.info('connected to MongoDB');
-  })
-  .catch((error) => {
-    logger.error('error connecting to MongoDB, error: ', error.message);
-  });
+    .then(() => {
+        logger.info('connected to MongoDB');
+    })
+    .catch((error) => {
+        logger.error('error connecting to MongoDB, error: ', error.message);
+    });
 
 const app = express();
 app.use(cors())
