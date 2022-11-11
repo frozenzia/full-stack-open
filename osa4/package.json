@@ -4,7 +4,7 @@
   "description": "Bloglist app for part4 of full-stack-open course",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
     "server": "NODE_ENV=production node ./src/index.js",
     "watch": "NODE_ENV=development nodemon ./src/index.js"
   },
