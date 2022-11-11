@@ -71,6 +71,7 @@ it('blogs returned have a field "id" (not "_id")', async () => {
   const response = await api
     .get('/api/blogs')
   expect(response.body[0].id).toBeDefined();
+  expect(response.body[0]._id).not.toBeDefined();
 });
 
 it('canNOT add a blog to the database if it does NOT include token in header', async () => {
