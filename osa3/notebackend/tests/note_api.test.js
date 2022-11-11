@@ -6,7 +6,7 @@ const Note = require('../models/note');
 const User = require('../models/user');
 const helper = require('./test_helper');
 
-const initialNotes = helper.initialNotes;
+const { initialNotes, notesInDb, nonExistingId } = helper;
 
 const api = supertest(app)
 
@@ -18,11 +18,7 @@ describe('WHEN there are initially some notes saved', () => {
         await Note.deleteMany({});
 
         // populate db
-        let noteObject = null;
-        for (let note of initialNotes) {
-            noteObject = new Note(note);
-            await noteObject.save();
-        }
+        await Note.insertMany(initialNotes);
 
         // For note creation (and later deletion), we must first log in
         // in order to get a token, which will be used during note creation.
@@ -55,7 +51,7 @@ describe('WHEN there are initially some notes saved', () => {
     test('all notes are returned', async () => {
         const response = await api.get('/api/notes')
 
-        expect(response.body.length).toBe(initialNotes.length)
+        expect(response.body).toHaveLength(initialNotes.length)
     })
 
     test('a specific note is in the returned notes', async () => {
@@ -66,7 +62,7 @@ describe('WHEN there are initially some notes saved', () => {
 
     describe('WHEN viewing a specific note', () => {
         it('a specific note can be fetched with a valid id', async () => {
-            const notesAtStart = await helper.notesInDb();
+            const notesAtStart = await notesInDb();
             const noteToFind = notesAtStart[0];
 
             const fetchedNote = await api
@@ -78,7 +74,7 @@ describe('WHEN there are initially some notes saved', () => {
         });
 
         it('fails with statuscode 404 if note does not exist', async () => {
-            const validNonexistingId = await helper.nonExistingId()
+            const validNonexistingId = await nonExistingId()
 
             await api
                 .get(`/api/notes/${validNonexistingId}`)
@@ -107,10 +103,10 @@ describe('WHEN there are initially some notes saved', () => {
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
 
-            const notesAfterwards = await helper.notesInDb();
-            expect(notesAfterwards.length).toBe(initialNotes.length + 1);
+            const notesAfterwards = await notesInDb();
+            expect(notesAfterwards).toHaveLength(initialNotes.length + 1);
             const contents = notesAfterwards.map(n => n.content);
-            expect(contents).toContain('here is a new note');
+            expect(contents).toContain(newNote.content);
         });
 
         it('an invalid note is NOT added and fails with code 400', async () => {
@@ -124,22 +120,22 @@ describe('WHEN there are initially some notes saved', () => {
                 .send(newNote)
                 .expect(400)
 
-            const notesAfterwards = await helper.notesInDb();
-            expect(notesAfterwards.length).toBe(initialNotes.length);
+            const notesAfterwards = await notesInDb();
+            expect(notesAfterwards).toHaveLength(initialNotes.length);
         });
 
     });
     describe('WHEN deleting a note', () => {
         it('a note can be deleted and succeeds with 204 if valid id', async () => {
-            const notesAtStart = await helper.notesInDb();
+            const notesAtStart = await notesInDb();
             const noteToDelete = notesAtStart[0];
 
             await api
                 .delete(`/api/notes/${noteToDelete.id}`)
                 .expect(204)
 
-            const notesAfterwards = await helper.notesInDb();
-            expect(notesAfterwards.length).toBe(initialNotes.length - 1);
+            const notesAfterwards = await notesInDb();
+            expect(notesAfterwards).toHaveLength(initialNotes.length - 1);
 
             const contents = notesAfterwards.map(n => n.content);
             expect(contents).not.toContain(noteToDelete.content);
