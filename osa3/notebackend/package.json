@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production node index.js",
     "watch": "NODE_ENV=development PORT=5001 nodemon index.js",
-    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
     "build:ui": "rm -rf build && cd ../../osa2/notes && npm run build --prod && cp -r build ../../osa3/notebackend/",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
