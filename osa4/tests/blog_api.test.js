@@ -64,7 +64,7 @@ it('get /api/blogs gives a list of all the blogs on record', async () => {
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/);
-  expect(response.body.length === initialBlogs.length)
+  expect(response.body).toHaveLength(initialBlogs.length)
 });
 
 it('blogs returned have a field "id" (not "_id")', async () => {
@@ -92,7 +92,7 @@ it('can add a blog to the database IF it includes token in header', async () => 
   const addedBlogId = addedBlogResponse.body.id;
   const response = await api
     .get('/api/blogs')
-  expect(response.body.length).toEqual(initialBlogs.length + 1);
+  expect(response.body).toHaveLength(initialBlogs.length + 1);
   const titles = response.body.map(b => b.title);
   expect(titles).toContain('Lonely writer');
   const lastBlog = response.body[response.body.length - 1];
@@ -202,7 +202,7 @@ it('succeeds in deleting a specific blog when proper token sent', async () => {
     .expect(204);
   const response2 = await api
     .get('/api/blogs');
-  expect(response2.body.length).toEqual(initialBlogs.length);
+  expect(response2.body).toHaveLength(initialBlogs.length);
 });
 
 it('succeeds in editing "likes" field for a specific blog', async () => {
