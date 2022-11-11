@@ -104,7 +104,7 @@ describe('WHEN there are initially some notes saved', () => {
                 .post('/api/notes')
                 .set('Authorization', `bearer ${token}`)
                 .send(newNote)
-                .expect(200)
+                .expect(201)
                 .expect('Content-Type', /application\/json/)
 
             const notesAfterwards = await helper.notesInDb();
