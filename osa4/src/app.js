@@ -1,5 +1,6 @@
 // const http = require('http')
 const express = require('express')
+require('express-async-errors');
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
