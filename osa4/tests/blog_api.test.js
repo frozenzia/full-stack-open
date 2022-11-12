@@ -207,7 +207,7 @@ it('succeeds in editing "likes" field for a specific blog', async () => {
         .get('/api/blogs');
     const blogToEdit = response.body[0];
     const { id } = blogToEdit;
-    const editedBlog = new Blog(blogToEdit);
+    const editedBlog = { ...blogToEdit };
     editedBlog.likes += 1;
     await api
         .put(`/api/blogs/${id}`)
