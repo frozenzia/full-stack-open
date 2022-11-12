@@ -48,11 +48,7 @@ beforeEach(async () => {
 
   // populate dbs
   // initial blogs
-  let blogObject = null;
-  for (let blog of initialBlogs) {
-    blogObject = new Blog(blog);
-    await blogObject.save();
-  }
+  await Blog.insertMany(initialBlogs);
   // initial user exists and logs in...
   await api.post('/api/users').send(genericUser);
   const resp = await api.post('/api/login').send(genericUser);
@@ -95,7 +91,7 @@ it('can add a blog to the database IF it includes token in header', async () => 
     .get('/api/blogs')
   expect(response.body).toHaveLength(initialBlogs.length + 1);
   const titles = response.body.map(b => b.title);
-  expect(titles).toContain('Lonely writer');
+  expect(titles).toContain(genericBlog.title);
   const lastBlog = response.body[response.body.length - 1];
   expect(lastBlog.user).toBeDefined();
   const user = await User.findById(lastBlog.user.id);
