@@ -6,7 +6,8 @@
   "scripts": {
     "test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
     "server": "NODE_ENV=production node ./src/index.js",
-    "watch": "NODE_ENV=development nodemon ./src/index.js"
+    "watch": "NODE_ENV=development nodemon ./src/index.js",
+    "lint": "eslint ."
   },
   "author": "Paul Vinson BROWN",
   "license": "MIT",
