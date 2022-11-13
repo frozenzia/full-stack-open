@@ -7,13 +7,13 @@ usersRouter.get('/', async (req, res) => {
     const users = await User
         .find({})
         .populate('notes', { content: 1, date: 1 });
-    res.json(users.map(user => user.toJSON()));
+    res.json(users);
 })
 
 usersRouter.get('/:id', async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {
-        res.json(user.toJSON())
+        res.json(user)
     } else {
         res.status(404).end()
     }
@@ -33,7 +33,7 @@ usersRouter.post('/', async (req, res) => {
     });
 
     const savedUser = await user.save();
-    res.json(savedUser.toJSON());
+    res.json(savedUser);
 })
 
 usersRouter.delete('/:id', async (req, res) => {

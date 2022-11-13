@@ -8,7 +8,7 @@ usersRouter.get('/', async (request, response) => {
     const users = await User
         .find({})
         .populate('blogs', { title: 1, url: 1, author: 1 });
-    response.json(users.map(user => user.toJSON()))
+    response.json(users)
 })
 
 usersRouter.post('/', async ({ body }, response) => {
@@ -25,7 +25,7 @@ usersRouter.post('/', async ({ body }, response) => {
 
     const user = new User(newUser)
     const result = await user.save();
-    response.status(201).json(result.toJSON());
+    response.status(201).json(result);
 })
 
 // usersRouter.delete('/:id', async (req, res) => {
@@ -35,7 +35,7 @@ usersRouter.post('/', async ({ body }, response) => {
 //
 // usersRouter.put('/:id', async (req, res) => {
 //     const resp = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-//     res.json(resp.toJSON())
+//     res.json(resp)
 // })
 
 module.exports = usersRouter;
