@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production node index.js",
     "watch": "NODE_ENV=development PORT=5001 nodemon index.js",
-    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
     "build:ui": "rm -rf build && cd ../../osa2/notes && npm run build --prod && cp -r build ../../osa3/notebackend/",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
@@ -21,6 +21,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.0",
     "mongoose-unique-validator": "^3.1.0"
