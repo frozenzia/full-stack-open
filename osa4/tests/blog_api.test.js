@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 
@@ -47,12 +48,20 @@ beforeEach(async () => {
     await User.deleteMany({});
 
     // populate dbs
-    // initial blogs
-    await Blog.insertMany(initialBlogs);
     // initial user exists and logs in...
     await api.post('/api/users').send(genericUser);
-    const resp = await api.post('/api/login').send(genericUser);
-    token = resp.body.token;
+    const userInDb = await api.post('/api/login').send(genericUser);
+    token = userInDb.body.token;
+
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    const userToUpdate = await User.findById(decodedToken.id);
+    // initial blogs (add in the userId to each blog)
+    await Blog.insertMany(initialBlogs.map(b => ({ ...b, user: userToUpdate._id })));
+
+    // now add the blogIDs to the user...
+    const blogsInDb = await api.get('/api/blogs');
+    userToUpdate.blogs.push(...blogsInDb.body.map(b => b.id));
+    await userToUpdate.save();
 });
 
 it('get /api/blogs gives a list of all the blogs on record', async () => {
@@ -68,6 +77,12 @@ it('blogs returned have a field "id" (not "_id")', async () => {
         .get('/api/blogs')
     expect(response.body[0].id).toBeDefined();
     expect(response.body[0]._id).not.toBeDefined();
+});
+
+it('blogs returned have a field "user"', async () => {
+    const response = await api
+        .get('/api/blogs')
+    expect(response.body[0].user).toBeDefined();
 });
 
 it('canNOT add a blog to the database if it does NOT include token in header', async () => {
@@ -209,6 +224,7 @@ it('succeeds in editing "likes" field for a specific blog', async () => {
     const { id } = blogToEdit;
     const editedBlog = { ...blogToEdit };
     editedBlog.likes += 1;
+    editedBlog.user = blogToEdit.user.id; // NEW thing b/c populate expands the id into actual content
     await api
         .put(`/api/blogs/${id}`)
         .send(editedBlog)
