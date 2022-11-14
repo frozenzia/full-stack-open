@@ -13,21 +13,20 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
     const blogBase = { ...request.body };
-  // const decodedToken = request.token
-  //   ? jwt.verify(request.token, process.env.SECRET)
-  //   : null;
-  // if (!request.token || !decodedToken.id) {
-  //   return response.status(401).json({ error: 'token missing or invalid' })
-  // }
-  // const userToUpdate = await User.findById(decodedToken.id);
+    const decodedToken = request.token
+        ? jwt.verify(request.token, process.env.SECRET)
+        : null;
+    if (!request.token || !decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' })
+    }
+    const userToUpdate = await User.findById(decodedToken.id);
 
-  // blogBase.user = userToUpdate._id;
-  blogBase.user = '5e53b86d7a766cdcc5d72cce';
+    blogBase.user = userToUpdate._id;
     const blog = new Blog(blogBase)
     const savedBlog = await blog.save();
 
-  // userToUpdate.blogs.push(savedBlog._id);
-  // await userToUpdate.save();
+    userToUpdate.blogs.push(savedBlog._id);
+    await userToUpdate.save();
 
     response.status(201).json(savedBlog);
 })
