@@ -30,9 +30,11 @@ const update = (id, newObject) => {
     .then(resp => resp.data)
 }
 
-export default {
-    setToken,
-    getAll,
-    create,
-    update
-}
+const notesService = {
+  setToken,
+  getAll,
+  create,
+  update
+};
+
+export default notesService;
