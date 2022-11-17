@@ -3,7 +3,8 @@ module.exports = {
         'commonjs': true,
         'es6': true,
         'node': true,
-        'jest': true
+        'jest': true,
+        'browser': true
     },
     'extends': [
         'eslint:recommended',
@@ -21,6 +22,11 @@ module.exports = {
         'sourceType': 'module',
     },
     'plugins': [ 'react', 'jest' ],
+    'settings': {
+        'react': {
+            'version': 'detect',
+        },
+    },
     'rules': {
         'indent': [
             'error',
