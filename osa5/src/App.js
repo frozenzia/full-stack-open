@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from 'react'
 
-import Blog from "./components/Blog"
-import LoginForm from "./components/LoginForm"
-import blogService from "./services/blogs"
-import loginService from "./services/login"
+import Blog from './components/Blog'
+import LoginForm from './components/LoginForm'
+import blogService from './services/blogs'
+import loginService from './services/login'
 
-import "./App.css"
+import './App.css'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
     const [user, setUser] = useState(null)
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState(null)
 
     useEffect(() => {
@@ -20,7 +20,7 @@ const App = () => {
     }, [])
 
     useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem("loggedBlogUser")
+        const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON)
             setUser(user)
@@ -37,7 +37,7 @@ const App = () => {
     }
 
     const handleLogout = () => {
-        window.localStorage.removeItem("loggedBlogUser")
+        window.localStorage.removeItem('loggedBlogUser')
         setUser(null)
     }
 
@@ -47,16 +47,16 @@ const App = () => {
             const user = await loginService.login({
                 username, password
             })
-            console.log("user: ", user)
+            console.log('user: ', user)
             window.localStorage.setItem(
-                "loggedBlogUser", JSON.stringify(user)
+                'loggedBlogUser', JSON.stringify(user)
             )
             blogService.setToken(user.token)
             setUser(user)
-            setUsername("")
-            setPassword("")
+            setUsername('')
+            setPassword('')
         } catch (exception) {
-            setErrorMessage("wrong creds")
+            setErrorMessage('wrong creds')
             setTimeout(() => {
                 setErrorMessage(null)
             }, 5000)

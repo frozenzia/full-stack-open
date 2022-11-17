@@ -1,53 +1,53 @@
 module.exports = {
-    "env": {
-        "commonjs": true,
-        "es6": true,
-        "node": true,
-        "jest": true
+    'env': {
+        'commonjs': true,
+        'es6': true,
+        'node': true,
+        'jest': true
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended"
+    'extends': [
+        'eslint:recommended',
+        'plugin:react/recommended'
     ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
+    'globals': {
+        'Atomics': 'readonly',
+        'SharedArrayBuffer': 'readonly'
     },
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "ecmaFeatures": {
-            "jsx": true
+    'parserOptions': {
+        'ecmaVersion': 2018,
+        'ecmaFeatures': {
+            'jsx': true
         },
-        "sourceType": "module",
+        'sourceType': 'module',
     },
-    "plugins": [ "react", "jest" ],
-    "rules": {
-        "indent": [
-            "error",
+    'plugins': [ 'react', 'jest' ],
+    'rules': {
+        'indent': [
+            'error',
             4
         ],
-        "eqeqeq": "error",
-        "no-trailing-spaces": "error",
-        "object-curly-spacing": [
-            "error", "always"
+        'eqeqeq': 'error',
+        'no-trailing-spaces': 'error',
+        'object-curly-spacing': [
+            'error', 'always'
         ],
-        "arrow-spacing": [
-            "error", { "before": true, "after": true }
+        'arrow-spacing': [
+            'error', { 'before': true, 'after': true }
         ],
-        "linebreak-style": [
-            "error",
-            "unix"
+        'linebreak-style': [
+            'error',
+            'unix'
         ],
-        "quotes": [
-            "error",
-            "double"
+        'quotes': [
+            'error',
+            'single'
         ],
-        "semi": [
-            "error",
-            "never"
+        'semi': [
+            'error',
+            'never'
         ],
-        "no-console": 0,
-        "react/prop-types": 0,
-        "react/react-in-jsx-scope": "off"
+        'no-console': 0,
+        'react/prop-types': 0,
+        'react/react-in-jsx-scope': 'off'
     }
 }
