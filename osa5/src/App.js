@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 
 import Blog from './components/Blog'
-import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import AddBlogForm from './components/AddBlogForm'
 
 import './App.css'
 
@@ -41,13 +42,28 @@ const App = () => {
         setUser(null)
     }
 
+    const handleAddBlog = async (title, author, url) => {
+        try {
+            const resp = await blogService.create({ title, author, url })
+            console.log('resp: ', { value: resp })
+            console.log('blogs: ', { value: blogs })
+            const newBlogs = [...blogs]
+            newBlogs.push(resp)
+            setBlogs(newBlogs)
+        } catch (exception) {
+            setErrorMessage(exception.response.data.error)
+            setTimeout(() => {
+                setErrorMessage(null)
+            }, 5000)
+        }
+    }
+
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
             const user = await loginService.login({
                 username, password
             })
-            console.log('user: ', user)
             window.localStorage.setItem(
                 'loggedBlogUser', JSON.stringify(user)
             )
@@ -67,9 +83,17 @@ const App = () => {
         <div>
             <h2>blogs</h2>
             <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+            <AddBlogForm onSubmit={handleAddBlog} />
             {blogs.map(blog =>
                 <Blog key={blog.id} blog={blog} />
             )}
+        </div>
+    )
+
+    const showError = () => (
+        <div>
+            <h2>ERROR</h2>
+            <p>{errorMessage}</p>
         </div>
     )
 
@@ -84,6 +108,10 @@ const App = () => {
             />
         </div>
     )
+
+    if (errorMessage) {
+        return showError()
+    }
 
     return user
         ? showBlogs()
