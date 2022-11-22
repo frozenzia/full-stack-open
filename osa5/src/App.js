@@ -5,15 +5,14 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
-
-import './App.css'
+import Notification from './components/Notification'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
     const [user, setUser] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [actionResult, setActionResult] = useState(null)
 
     useEffect(() => {
         blogService.getAll()
@@ -28,6 +27,13 @@ const App = () => {
             blogService.setToken(user.token)
         }
     }, []) // <-- '[]' so effect is run only after 1st render
+
+    const showActionResult = (text, succeeded) => {
+        setActionResult({ text, succeeded })
+        setTimeout(() => {
+            setActionResult(null)
+        }, 5000)
+    }
 
     const handleUsernameChange = (text) => {
         setUsername(text)
@@ -45,16 +51,12 @@ const App = () => {
     const handleAddBlog = async (title, author, url) => {
         try {
             const resp = await blogService.create({ title, author, url })
-            console.log('resp: ', { value: resp })
-            console.log('blogs: ', { value: blogs })
             const newBlogs = [...blogs]
             newBlogs.push(resp)
             setBlogs(newBlogs)
+            showActionResult(`a new blog, "${resp.title}", by ${resp.author}, has been added`, true)
         } catch (exception) {
-            setErrorMessage(exception.response.data.error)
-            setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+            showActionResult(exception.response.data.error, false)
         }
     }
 
@@ -72,10 +74,7 @@ const App = () => {
             setUsername('')
             setPassword('')
         } catch (exception) {
-            setErrorMessage('wrong creds')
-            setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+            showActionResult('wrong creds (username or password)', false)
         }
     }
 
@@ -87,13 +86,6 @@ const App = () => {
             {blogs.map(blog =>
                 <Blog key={blog.id} blog={blog} />
             )}
-        </div>
-    )
-
-    const showError = () => (
-        <div>
-            <h2>ERROR</h2>
-            <p>{errorMessage}</p>
         </div>
     )
 
@@ -109,13 +101,13 @@ const App = () => {
         </div>
     )
 
-    if (errorMessage) {
-        return showError()
-    }
-
-    return user
-        ? showBlogs()
-        : showLogin()
+    return <>
+        <Notification
+            message={actionResult && actionResult.text}
+            succeeded={actionResult && actionResult.succeeded}
+        />
+        {user ? showBlogs() : showLogin()}
+    </>
 }
 
 export default App
