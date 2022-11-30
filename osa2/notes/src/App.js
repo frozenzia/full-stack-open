@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import Note from './components/Note'
 import Notification from './components/Notification'
@@ -6,6 +6,7 @@ import LoginForm from './components/LoginForm';
 import NoteForm from './components/NoteForm';
 import noteService from './services/notes';
 import loginService from './services/login';
+import Togglable from './components/Togglable';
 
 import './App.css';
 
@@ -26,12 +27,11 @@ const Footer = () => {
 
 const App = (props) => {
   const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  const noteFormRef = useRef()
 
   useEffect(() => {
     noteService
@@ -47,6 +47,7 @@ const App = (props) => {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       noteService.setToken(user.token);
+    } else {
     }
   }, []) // <-- '[]' so effect is run only after 1st render
 
@@ -83,32 +84,13 @@ const App = (props) => {
     />
   )
 
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
-  }
-
-  const addNote = (event) => {
-    event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() > 0.5,
-    }
+  const createNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility()
     noteService
       .create(noteObject)
       .then(createdNote => {
         setNotes(notes.concat(createdNote))
-        setNewNote('')
       });
-  }
-
-  const handleUsernameChange = (text) => {
-    setUsername(text);
-  }
-
-  const handlePasswordChange = (text) => {
-    setPassword(text);
   }
 
   const handleLogout = () => {
@@ -116,8 +98,7 @@ const App = (props) => {
     setUser(null);
   }
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = async (username, password) => {
     try {
       const user = await loginService.login({
         username, password
@@ -127,8 +108,6 @@ const App = (props) => {
       );
       noteService.setToken(user.token);
       setUser(user)
-      setUsername('')
-      setPassword('')
     } catch (exception) {
       setErrorMessage('wrong creds')
       setTimeout(() => {
@@ -137,38 +116,36 @@ const App = (props) => {
     }
   }
 
+  const loginForm = () => {
+    return <Togglable buttonLabel='log in'>
+        <h2>Login</h2>
+        <LoginForm handleLogin={handleLogin} />
+    </Togglable>;
+  }
+
+  const notesForm = () => <>
+    <div className='loggedIn'>
+      <div>
+        {user.name} logged in
+      </div>
+      <button onClick={handleLogout}>
+        logout
+      </button>
+    </div>
+    <Togglable buttonLabel='new note' ref={noteFormRef}>
+      <NoteForm createNote={createNote} />
+    </Togglable>
+  </>;
+
   return (
     <div>
       <h1>Notes</h1>
 
       <Notification message={errorMessage} />
 
-      <h2>Login</h2>
+      {user && notesForm()}
 
-      {!user
-        ? <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={handleUsernameChange} handlePasswordChange={handlePasswordChange}
-            handleLogin={handleLogin}
-          />
-        :
-        <div>
-          <div className='loggedIn'>
-            <div>
-              {user.name} logged in
-            </div>
-            <button onClick={handleLogout}>
-              logout
-            </button>
-          </div>
-          <NoteForm
-            newNote={newNote}
-            handleNoteChange={handleNoteChange}
-            addNote={addNote}
-          />
-        </div>
-      }
+      {!user && loginForm()}
 
       <div>
         <button onClick={() => setShowAll(!showAll)}>

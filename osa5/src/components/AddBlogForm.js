@@ -24,13 +24,17 @@ const AddBlogForm = ({ onSubmit }) => {
         const title = formData.get('Title')
         const author = formData.get('Author')
         const url = formData.get('Url')
-        onSubmit(title, author, url)
+        onSubmit({ title, author, url })
+        setTitle('')
+        setAuthor('')
+        setUrl('')
     }
 
     return (
         <form onSubmit={handleSubmit}>
+            <h2>create new</h2>
             <div>
-            title
+                title
                 <input
                     type="text"
                     value={title}
@@ -39,7 +43,7 @@ const AddBlogForm = ({ onSubmit }) => {
                 />
             </div>
             <div>
-            author
+                author
                 <input
                     type="text"
                     value={author}
@@ -48,7 +52,7 @@ const AddBlogForm = ({ onSubmit }) => {
                 />
             </div>
             <div>
-            url
+                url
                 <input
                     type="text"
                     value={url}

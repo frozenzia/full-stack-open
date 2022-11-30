@@ -1,7 +1,27 @@
-import React from 'react'
+import { useState } from 'react'
 
-const LoginForm = ({ username, password, handleUsernameChange, handlePasswordChange, handleLogin }) => (
-    <form onSubmit={handleLogin}>
+const LoginForm = ({ handleLogin }) => {
+
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleUsernameChange = (text) => {
+    setUsername(text);
+  }
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+  }
+
+  const handleLoginInt = (event) => {
+    event.preventDefault();
+    handleLogin(username, password);
+    setUsername('')
+    setPassword('')
+  }
+
+  return (
+    <form onSubmit={handleLoginInt}>
       <div>
         username
         <input
@@ -23,5 +43,6 @@ const LoginForm = ({ username, password, handleUsernameChange, handlePasswordCha
       <button type="submit">login</button>
     </form>
   )
+}
 
 export default LoginForm
