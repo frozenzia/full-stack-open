@@ -21,3 +21,14 @@
 .hideMe {
     display: none;
 }
+
+.singleBlog {
+    border: 1px solid gray;
+    margin: 0.25em 0;
+    padding-top: 10px;
+    padding-left: 2px;
+}
+
+button {
+    margin-left: 0.5em;
+}

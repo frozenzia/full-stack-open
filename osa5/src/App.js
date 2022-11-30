@@ -64,6 +64,24 @@ const App = () => {
         }
     }
 
+    const increaseLikesOf = blog => {
+        console.log('likes of ', blog.id, ' needs to be increased')
+        const origUser = blog.user // must only pass ID as user to backend
+        const changedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
+
+        blogService
+            .update(changedBlog)
+            .then(changedBlogFromServer => {
+                changedBlogFromServer.user = origUser // replace the original user info
+                setBlogs(blogs
+                    .map(b => b.id !== blog.id ? b : changedBlogFromServer)
+                )
+            })
+            .catch(() => {
+                showActionResult('increasing likes for this blog failed', false)
+            })
+    }
+
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
@@ -90,7 +108,7 @@ const App = () => {
                 <AddBlogForm onSubmit={handleAddBlog} />
             </Togglable>
             {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
+                <Blog key={blog.id} onLikePress={increaseLikesOf} blog={blog} />
             )}
         </div>
     )
