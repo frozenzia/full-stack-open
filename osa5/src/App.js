@@ -17,9 +17,13 @@ const App = () => {
 
     const blogFormRef = useRef()
 
+    const setBlogsSorted = (blogs) => {
+        setBlogs(blogs.sort((a, b) => a.likes > b.likes ? -1 : 1))
+    }
+
     useEffect(() => {
         blogService.getAll()
-            .then(blogs => setBlogs(blogs))
+            .then(blogs => setBlogsSorted(blogs))
     }, [])
 
     useEffect(() => {
@@ -57,7 +61,7 @@ const App = () => {
             const resp = await blogService.create(blogObject)
             const newBlogs = [...blogs]
             newBlogs.push(resp)
-            setBlogs(newBlogs)
+            setBlogsSorted(newBlogs)
             showActionResult(`a new blog, "${resp.title}", by ${resp.author}, has been added`, true)
         } catch (exception) {
             showActionResult(exception.response.data.error, false)
@@ -73,7 +77,7 @@ const App = () => {
             .update(changedBlog)
             .then(changedBlogFromServer => {
                 changedBlogFromServer.user = origUser // replace the original user info
-                setBlogs(blogs
+                setBlogsSorted(blogs
                     .map(b => b.id !== blog.id ? b : changedBlogFromServer)
                 )
             })
