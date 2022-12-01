@@ -1,22 +1,38 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, onLikePress }) => {
+const Blog = ({ blog, onLikePress, onDeletePress, username : loggedInUser }) => {
+    const { id, title, author, url, likes, user } = blog
+    const { name, username } = user || {}
+
+    console.log('loggedInUser: ', { value: loggedInUser })
+    console.log('username: ', { value: username })
     const [showAll, setShowAll] = useState(false)
 
     const toggleShowAll = () => setShowAll(!showAll)
     const handleLikeClick = () => onLikePress(blog)
+    const handleDeleteClick = () => {
+        if (window.confirm(`Are you sure you want to delete "${title}", by ${author}?`)) {
+            onDeletePress(id)
+        }
+    }
 
     return <div className='singleBlog'>
         <div>
-            {blog.title} {blog.author} <button onClick={toggleShowAll}>{showAll ? 'hide' : 'view'}</button>
+            {title} {author} <button onClick={toggleShowAll}>{showAll ? 'hide' : 'view'}</button>
         </div>
         <div className={showAll ? 'showMe' : 'hideMe'}>
-            <div>{blog.url}</div>
+            <div>{url}</div>
             <div>
-                {blog.likes}
+                {likes}
                 <button onClick={handleLikeClick}>like</button></div>
-            <div>{blog.user && blog.user.name}</div>
+            <div>{user && name}</div>
         </div>
+        <button
+            className={username === loggedInUser ? 'showMe' : 'hideMe'}
+            onClick={handleDeleteClick}
+        >
+            remove
+        </button>
     </div>
 }
 

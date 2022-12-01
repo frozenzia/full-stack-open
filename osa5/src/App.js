@@ -86,6 +86,21 @@ const App = () => {
             })
     }
 
+    const deleteBlog = blogId => {
+        console.log('want to delete blog ', blogId)
+
+        blogService
+            .remove(blogId)
+            .then(
+                setBlogsSorted(blogs
+                    .filter(b => b.id !== blogId)
+                )
+            )
+            .catch(() => {
+                showActionResult('removing this blog failed', false)
+            })
+    }
+
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
@@ -112,7 +127,13 @@ const App = () => {
                 <AddBlogForm onSubmit={handleAddBlog} />
             </Togglable>
             {blogs.map(blog =>
-                <Blog key={blog.id} onLikePress={increaseLikesOf} blog={blog} />
+                <Blog
+                    key={blog.id}
+                    onLikePress={increaseLikesOf}
+                    onDeletePress={deleteBlog}
+                    username={user.username}
+                    blog={blog}
+                />
             )}
         </div>
     )

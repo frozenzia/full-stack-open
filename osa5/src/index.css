@@ -29,6 +29,6 @@
     padding-left: 2px;
 }
 
-button {
+button:nth-child(2) {
     margin-left: 0.5em;
 }
