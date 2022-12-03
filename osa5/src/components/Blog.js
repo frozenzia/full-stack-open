@@ -5,8 +5,6 @@ const Blog = ({ blog, onLikePress, onDeletePress, username : loggedInUser }) => 
     const { id, title, author, url, likes, user } = blog
     const { name, username } = user || {}
 
-    console.log('loggedInUser: ', { value: loggedInUser })
-    console.log('username: ', { value: username })
     const [showAll, setShowAll] = useState(false)
 
     const toggleShowAll = () => setShowAll(!showAll)
@@ -23,10 +21,10 @@ const Blog = ({ blog, onLikePress, onDeletePress, username : loggedInUser }) => 
         </div>
         <div className={showAll ? 'showMe' : 'hideMe'}>
             <div>{url}</div>
-            <div>
+            <div className='likesPlusLikeButton'>
                 {likes}
-                <button onClick={handleLikeClick}>like</button></div>
-            <div>{user && name}</div>
+                <button onClick={handleLikeClick} className='likeButton'>like</button></div>
+            <div className='usersName'>{user && name}</div>
         </div>
         <button
             className={username === loggedInUser ? 'showMe' : 'hideMe'}
@@ -39,7 +37,7 @@ const Blog = ({ blog, onLikePress, onDeletePress, username : loggedInUser }) => 
 
 Blog.propTypes = {
     blog: PropTypes.shape({}).isRequired,
-    username: PropTypes.shape({}).isRequired,
+    username: PropTypes.string.isRequired,
     onLikePress: PropTypes.func.isRequired,
     onDeletePress: PropTypes.func.isRequired,
 }
