@@ -20,7 +20,7 @@ const Footer = () => {
     return (
         <div style={footerStyle}>
             <br />
-            <em>Note app, Department of Computer Science, University of Helsinki 2019</em>
+            <em>Note app, Department of Computer Science, University of Helsinki 2022</em>
         </div>
     )
 }
@@ -53,11 +53,16 @@ const App = () => {
     const toggleImportanceOf = id => {
         console.log('importance of ', id, ' needs to be toggled')
         const note = notes.find(n => n.id === id)
-        const changedNote = { ...note, important: !note.important }
+        const origUser = note.user
+        const changedNote = { ...note, important: !note.important, user: note.user.id }
+
+        console.log('note: ', { value: note })
+        console.log('changedNote: ', { value: changedNote })
 
         noteService
             .update(id, changedNote)
             .then(changedNoteFromServer => {
+                changedNoteFromServer.user = origUser
                 setNotes(notes
                     .map(note => note.id !== id ? note : changedNoteFromServer)
                 )
@@ -84,7 +89,7 @@ const App = () => {
     )
 
     const createNote = (noteObject) => {
-        noteFormRef.current.toggleVisibility()
+        noteFormRef.current.toggleVisible()
         noteService
             .create(noteObject)
             .then(createdNote => {
