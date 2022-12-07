@@ -1,0 +1,1 @@
+POST http://localhost:5003/api/testing/reset
