@@ -4,7 +4,8 @@ module.exports = {
         'es6': true,
         'node': true,
         'jest': true,
-        'browser': true
+        'browser': true,
+        'cypress/globals': true
     },
     'extends': [
         'eslint:recommended',
@@ -21,7 +22,7 @@ module.exports = {
         },
         'sourceType': 'module',
     },
-    'plugins': [ 'react', 'jest' ],
+    'plugins': [ 'react', 'jest', 'cypress' ],
     'settings': {
         'react': {
             'version': 'detect',
