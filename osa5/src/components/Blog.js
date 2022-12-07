@@ -15,20 +15,21 @@ const Blog = ({ blog, onLikePress, onDeletePress, username : loggedInUser }) => 
         }
     }
 
-    return <div className='singleBlog'>
+    return <div className='singleBlog' data-cy='blog'>
         <div>
-            {title} {author} <button onClick={toggleShowAll}>{showAll ? 'hide' : 'view'}</button>
+            {title} {author} <button data-cy="showHideBlog" onClick={toggleShowAll}>{showAll ? 'hide' : 'view'}</button>
         </div>
         <div className={showAll ? 'showMe' : 'hideMe'}>
             <div>{url}</div>
             <div className='likesPlusLikeButton'>
-                {likes}
-                <button onClick={handleLikeClick} className='likeButton'>like</button></div>
+                <span data-cy='likeTotal'>{likes}</span>
+                <button onClick={handleLikeClick} className='likeButton' data-cy='likeButton'>like</button></div>
             <div className='usersName'>{user && name}</div>
         </div>
         <button
             className={username === loggedInUser ? 'showMe' : 'hideMe'}
             onClick={handleDeleteClick}
+            data-cy='removeButton'
         >
             remove
         </button>

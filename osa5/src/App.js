@@ -91,11 +91,11 @@ const App = () => {
 
         blogService
             .remove(blogId)
-            .then(
+            .then(() => {
                 setBlogsSorted(blogs
                     .filter(b => b.id !== blogId)
                 )
-            )
+            })
             .catch(() => {
                 showActionResult('removing this blog failed', false)
             })
@@ -122,7 +122,7 @@ const App = () => {
     const showBlogs = () => (
         <div>
             <h2>blogs</h2>
-            <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+            <p>{user.name} logged in <button onClick={handleLogout} data-cy='logoutButton'>logout</button></p>
             <Togglable buttonLabel='create new blog' ref={blogFormRef}>
                 <AddBlogForm onSubmit={handleAddBlog} />
             </Togglable>

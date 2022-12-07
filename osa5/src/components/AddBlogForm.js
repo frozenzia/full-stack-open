@@ -64,7 +64,7 @@ const AddBlogForm = ({ onSubmit }) => {
                     placeholder="enter blog url here"
                 />
             </div>
-            <button type="submit">create</button>
+            <button id='createBlogButton' type="submit">create</button>
         </form>
     )
 }
