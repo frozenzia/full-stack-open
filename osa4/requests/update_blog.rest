@@ -1,0 +1,11 @@
+PUT http://localhost:5003/api/blogs/5e43c32039a51635bc8842f1
+Content-Type: application/json
+Authorization: bearer
+
+{
+    "title": "huu",
+    "author": "haavemaailma",
+    "url": "https://uta.fi",
+    "likes": 8,
+    "id": "5e43c32039a51635bc8842f1"
+}

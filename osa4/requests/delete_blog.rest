@@ -1,0 +1,2 @@
+DELETE http://localhost:5003/api/blogs/<idHERE>
+Authorization: bearer <tokenHERE>

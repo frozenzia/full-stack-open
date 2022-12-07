@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 import AddBlogForm from './components/AddBlogForm'
 import Notification from './components/Notification'
 
@@ -14,9 +15,15 @@ const App = () => {
     const [password, setPassword] = useState('')
     const [actionResult, setActionResult] = useState(null)
 
+    const blogFormRef = useRef()
+
+    const setBlogsSorted = (blogs) => {
+        setBlogs(blogs.sort((a, b) => a.likes > b.likes ? -1 : 1))
+    }
+
     useEffect(() => {
         blogService.getAll()
-            .then(blogs => setBlogs(blogs))
+            .then(blogs => setBlogsSorted(blogs))
     }, [])
 
     useEffect(() => {
@@ -48,16 +55,50 @@ const App = () => {
         setUser(null)
     }
 
-    const handleAddBlog = async (title, author, url) => {
+    const handleAddBlog = async (blogObject) => {
+        blogFormRef.current.toggleVisible()
         try {
-            const resp = await blogService.create({ title, author, url })
+            const resp = await blogService.create(blogObject)
             const newBlogs = [...blogs]
             newBlogs.push(resp)
-            setBlogs(newBlogs)
+            setBlogsSorted(newBlogs)
             showActionResult(`a new blog, "${resp.title}", by ${resp.author}, has been added`, true)
         } catch (exception) {
             showActionResult(exception.response.data.error, false)
         }
+    }
+
+    const increaseLikesOf = blog => {
+        console.log('likes of ', blog.id, ' needs to be increased')
+        const origUser = blog.user // must only pass ID as user to backend
+        const changedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
+
+        blogService
+            .update(changedBlog)
+            .then(changedBlogFromServer => {
+                changedBlogFromServer.user = origUser // replace the original user info
+                setBlogsSorted(blogs
+                    .map(b => b.id !== blog.id ? b : changedBlogFromServer)
+                )
+            })
+            .catch(() => {
+                showActionResult('increasing likes for this blog failed', false)
+            })
+    }
+
+    const deleteBlog = blogId => {
+        console.log('want to delete blog ', blogId)
+
+        blogService
+            .remove(blogId)
+            .then(() => {
+                setBlogsSorted(blogs
+                    .filter(b => b.id !== blogId)
+                )
+            })
+            .catch(() => {
+                showActionResult('removing this blog failed', false)
+            })
     }
 
     const handleLogin = async (event) => {
@@ -81,10 +122,18 @@ const App = () => {
     const showBlogs = () => (
         <div>
             <h2>blogs</h2>
-            <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-            <AddBlogForm onSubmit={handleAddBlog} />
+            <p>{user.name} logged in <button onClick={handleLogout} data-cy='logoutButton'>logout</button></p>
+            <Togglable buttonLabel='create new blog' ref={blogFormRef}>
+                <AddBlogForm onSubmit={handleAddBlog} />
+            </Togglable>
             {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
+                <Blog
+                    key={blog.id}
+                    onLikePress={increaseLikesOf}
+                    onDeletePress={deleteBlog}
+                    username={user.username}
+                    blog={blog}
+                />
             )}
         </div>
     )

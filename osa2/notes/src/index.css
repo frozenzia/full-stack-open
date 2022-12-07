@@ -21,3 +21,15 @@ h1 {
     margin-bottom: 10px;
     width: 30%;
 }
+
+.showMe {
+    display: '';
+}
+
+.hideMe {
+    display: none;
+}
+
+button {
+    margin-bottom: 0.5em;
+}
