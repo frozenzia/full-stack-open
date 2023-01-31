@@ -22,13 +22,14 @@ const counterReducer = (state = 0, action) => {
 
 const store = configureStore({ reducer: counterReducer })
 
+const root = ReactDOM.createRoot(document.getElementById('root'))
+
 const renderApp = () => {
-  ReactDOM.createRoot(document.getElementById('root')).render(
+  root.render(
     <React.StrictMode>
       <App store={store} />
     </React.StrictMode>
-  )
-}
+)}
 
 renderApp()
 store.subscribe(renderApp)
