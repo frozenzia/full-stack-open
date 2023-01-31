@@ -2,34 +2,74 @@ import deepFreeze from 'deep-freeze'
 import counterReducer from './reducer'
 
 describe('unicafe reducer', () => {
-  const initialState = {
-    good: 0,
-    ok: 0,
-    bad: 0
-  }
-
-  test('should return a proper initial state when called with undefined state', () => {
-    const state = {}
-    const action = {
-      type: 'DO_NOTHING'
+    const initialState = {
+        good: 0,
+        ok: 0,
+        bad: 0
     }
 
-    const newState = counterReducer(undefined, action)
-    expect(newState).toEqual(initialState)
-  })
+    test('should return a proper initial state when called with undefined state', () => {
+        const action = {
+            type: 'DO_NOTHING'
+        }
 
-  test('good is incremented', () => {
-    const action = {
-      type: 'GOOD'
-    }
-    const state = initialState
-
-    deepFreeze(state)
-    const newState = counterReducer(state, action)
-    expect(newState).toEqual({
-      good: 1,
-      ok: 0,
-      bad: 0
+        const newState = counterReducer(undefined, action)
+        expect(newState).toEqual(initialState)
     })
-  })
+
+    test('should increment good when called with GOOD', () => {
+        const action = {
+            type: 'GOOD'
+        }
+        const state = initialState
+
+        deepFreeze(state)
+        const newState = counterReducer(state, action)
+        expect(newState).toEqual({
+            good: 1,
+            ok: 0,
+            bad: 0
+        })
+    })
+
+    test('should increment ok when called with OK', () => {
+        const action = {
+            type: 'OK'
+        }
+        const state = initialState
+
+        deepFreeze(state)
+        const newState = counterReducer(state, action)
+        expect(newState).toEqual({
+            good: 0,
+            ok: 1,
+            bad: 0
+        })
+    })
+
+    test('should increment bad when called with BAD', () => {
+        const action = {
+            type: 'BAD'
+        }
+        const state = initialState
+
+        deepFreeze(state)
+        const newState = counterReducer(state, action)
+        expect(newState).toEqual({
+            good: 0,
+            ok: 0,
+            bad: 1
+        })
+    })
+
+    test('should return initial state when called with ZERO', () => {
+        const action = {
+            type: 'ZERO'
+        }
+        const state = { good: 1, ok: 2, bad: 3 }
+
+        deepFreeze(state)
+        const newState = counterReducer(state, action)
+        expect(newState).toEqual(initialState)
+    })
 })
