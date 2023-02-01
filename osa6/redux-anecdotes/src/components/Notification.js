@@ -6,7 +6,7 @@ const Notification = () => {
     }
     return (
         <div style={style}>
-      render here notification...
+            render here notification...
         </div>
     )
 }
