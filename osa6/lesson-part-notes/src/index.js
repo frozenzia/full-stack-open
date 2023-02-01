@@ -1,3 +1,4 @@
+import { Provider } from 'react-redux'
 import { createRoot } from 'react-dom/client'
 import { configureStore } from '@reduxjs/toolkit'
 
@@ -25,9 +26,12 @@ store.dispatch({
   }
 })
 
-
 const root = createRoot(document.getElementById('root'))
-const renderApp = () => root.render(<App store={store} />)
+const renderApp = () => root.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+)
 
 renderApp()
-store.subscribe(renderApp)
+// store.subscribe(renderApp)
