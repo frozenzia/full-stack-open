@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 const anecdotesAtStart = [
     'If it hurts, do it more often',
     'Adding manpower to a late software project makes it later!',
@@ -19,44 +21,36 @@ const asObject = (anecdote) => {
 
 export const initialState = anecdotesAtStart.map(asObject)
 
-export const createAnecdote = (content) => ({
-    type: 'NEW_ANECDOTE',
-    data: {
-        content,
-        id: getId(),
-        votes: 0
-    }
-})
+const anecdoteSlice = createSlice({
+    name: 'anecdotes',
+    initialState,
+    reducers: {
+        // dispatch(createAnecdote('hej'))
+        createAnecdote(state, { payload }) { // type = 'anecdotes/createAnecdote', payload = 'hej'
+            state.push({
+                content: payload,
+                id: getId(),
+                votes: 0
+            })
+        },
+        // dispatch(voteForId(3))
+        voteForId(state, action) { // type = 'anecdotes/voteForId', payload = 3
+            const { payload: id } = action
+            const anecdoteToChangeIdx = state.findIndex(anecdote => anecdote.id === id)
+            const changedAnecdote = {
+                ...state[anecdoteToChangeIdx],
+                votes: state[anecdoteToChangeIdx].votes + 1
+            }
 
-export const voteForId = (id) => ({
-    type: 'VOTE',
-    data: { id }
-})
-
-const reducer = (state = initialState, action) => {
-    console.log('state now: ', state)
-    console.log('action', action)
-
-    switch (action.type) {
-    case 'NEW_ANECDOTE':
-        return [...state, action.data]
-    case 'VOTE': {
-        const { id } = action.data
-        const anecdoteToChangeIdx = state.findIndex(anecdote => anecdote.id === id)
-        const changedAnecdote = {
-            ...state[anecdoteToChangeIdx],
-            votes: state[anecdoteToChangeIdx].votes + 1
+            return [
+                ...state.slice(0, anecdoteToChangeIdx),
+                changedAnecdote,
+                ...state.slice(anecdoteToChangeIdx + 1)
+            ].sort((a, b) => a.votes > b.votes ? -1 : 1)
         }
-
-        return [
-            ...state.slice(0, anecdoteToChangeIdx),
-            changedAnecdote,
-            ...state.slice(anecdoteToChangeIdx + 1)
-        ].sort((a, b) => a.votes > b.votes ? -1 : 1)
     }
-    default:
-        return state
-    }
-}
+})
 
-export default reducer
+export const { createAnecdote, voteForId } = anecdoteSlice.actions
+
+export default anecdoteSlice.reducer

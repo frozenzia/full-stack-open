@@ -2,34 +2,30 @@ import anecdoteReducer, { initialState } from './anecdoteReducer'
 import deepFreeze from 'deep-freeze'
 
 describe('anecdoteReducer', () => {
-    test('returns initial state when called with action NO_ACTION', () => {
+    test('returns initial state when called with action anecdotes/notDefined', () => {
         const action = {
-            type: 'NO_ACTION',
+            type: 'anecdotes/notDefined',
         }
 
         const newState = anecdoteReducer(undefined, action)
         expect(newState).toEqual(initialState)
     })
 
-    test('returns new state with action NEW_ANECDOTE', () => {
+    test('returns new state with action anecdotes/createAnecdote', () => {
         const state = []
         const action = {
-            type: 'NEW_ANECDOTE',
-            data: {
-                content: 'the app state is in redux store',
-                id: 1,
-                votes: 0,
-            }
+            type: 'anecdotes/createAnecdote',
+            payload: 'the app state is in redux store'
         }
 
         deepFreeze(state)
         const newState = anecdoteReducer(state, action)
 
         expect(newState).toHaveLength(1)
-        expect(newState).toContainEqual(action.data)
+        expect(newState.map(a => a.content)).toContainEqual(action.payload)
     })
 
-    test('returns new state with action VOTE', () => {
+    test('returns new state with action anecdotes/voteForId', () => {
         const state = [
             {
                 content: 'the app state is in redux store',
@@ -44,10 +40,8 @@ describe('anecdoteReducer', () => {
         ]
 
         const action = {
-            type: 'VOTE',
-            data: {
-                id: 2
-            }
+            type: 'anecdotes/voteForId',
+            payload: 2
         }
 
         deepFreeze(state)
