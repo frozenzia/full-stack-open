@@ -7,3 +7,7 @@
 button:nth-child(2) {
   margin-left: 1em;
 }
+
+input[type="radio"] {
+  margin-right: 1.5em;
+}
