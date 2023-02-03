@@ -1,6 +1,6 @@
 import axios from 'axios'
-// const baseUrl = 'https://ancient-ocean-58745.herokuapp.com/notes'
-const baseUrl = '/api/notes'
+const baseUrl = 'http://localhost:5001/notes'
+// const baseUrl = '/api/notes'
 
 let token = null
 
@@ -8,20 +8,16 @@ const setToken = newToken => {
     token = `bearer ${newToken}`
 }
 
-const getAll = () => {
-    return axios
-        .get(baseUrl)
-        .then(resp => resp.data)
-}
+const getAll = async () => {
+    const response = await axios.get(baseUrl)
+    return response.data
+  }
 
-const create = newObject => {
-    const config = {
-        headers: { authorization: token },
-    }
 
-    return axios
-        .post(baseUrl, newObject, config)
-        .then(resp => resp.data)
+const createNew = async (content) => {
+    const object = { content, important: false }
+    const response = await axios.post(baseUrl, object)
+    return response.data
 }
 
 const update = (id, newObject) => {
@@ -33,7 +29,7 @@ const update = (id, newObject) => {
 const notesService = {
     setToken,
     getAll,
-    create,
+    createNew,
     update
 }
 
