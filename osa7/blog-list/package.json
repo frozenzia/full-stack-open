@@ -16,7 +16,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint .",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "prettier": "npx prettier --write ."
   },
   "eslintConfig": {
     "extends": "react-app"
