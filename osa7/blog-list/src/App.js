@@ -1,6 +1,12 @@
+import { useDispatch } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 
 import Blog from "./components/Blog";
+import {
+    resetNotification,
+    setNotificationFail,
+    setNotificationSuccess,
+} from "./reducers/notificationReducer";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
@@ -9,11 +15,12 @@ import AddBlogForm from "./components/AddBlogForm";
 import Notification from "./components/Notification";
 
 const App = () => {
+    const dispatch = useDispatch();
+
     const [blogs, setBlogs] = useState([]);
     const [user, setUser] = useState(null);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [actionResult, setActionResult] = useState(null);
 
     const blogFormRef = useRef();
 
@@ -35,9 +42,13 @@ const App = () => {
     }, []); // <-- '[]' so effect is run only after 1st render
 
     const showActionResult = (text, succeeded) => {
-        setActionResult({ text, succeeded });
+        if (succeeded) {
+            dispatch(setNotificationSuccess(text));
+        } else {
+            dispatch(setNotificationFail(text));
+        }
         setTimeout(() => {
-            setActionResult(null);
+            dispatch(resetNotification());
         }, 5000);
     };
 
@@ -73,6 +84,15 @@ const App = () => {
     const increaseLikesOf = (blog) => {
         console.log("likes of ", blog.id, " needs to be increased");
         const origUser = blog.user; // must only pass ID as user to backend
+        if (!origUser) {
+            // case where user is unknown b/c of old notes cluttering up the place!
+            showActionResult(
+                "increasing likes for this blog failed, as it is a relic",
+                false
+            );
+            return;
+        }
+
         const changedBlog = {
             ...blog,
             likes: blog.likes + 1,
@@ -166,10 +186,7 @@ const App = () => {
 
     return (
         <>
-            <Notification
-                message={actionResult && actionResult.text}
-                succeeded={actionResult && actionResult.succeeded}
-            />
+            <Notification />
             {user ? showBlogs() : showLogin()}
         </>
     );
