@@ -24,10 +24,20 @@ const blogsSlice = createSlice({
         resetBlogs() {
             return initialState;
         },
+        // dispatch(updateBlog(<changedBlog>))
+        updateBlog(state, action) {
+            return state.map((b) =>
+                b.id !== action.payload.id ? b : action.payload
+            );
+        },
+        deleteBlog(state, action) {
+            return state.filter((b) => b.id !== action.payload);
+        },
     },
 });
 
-export const { resetBlogs, setBlogs, appendBlog } = blogsSlice.actions;
+export const { appendBlog, deleteBlog, resetBlogs, setBlogs, updateBlog } =
+    blogsSlice.actions;
 
 export const initializeBlogs = () => async (dispatch) => {
     const blogs = await blogService.getAll();
@@ -48,6 +58,44 @@ export const createNewBlog = (blogContent) => async (dispatch) => {
         );
     } catch (exception) {
         dispatch(setNotificationFail(exception.response.data.error));
+    }
+};
+
+export const increaseLikes = (blog) => async (dispatch) => {
+    console.log("likes of ", blog.id, " needs to be increased");
+    const origUser = blog.user; // must only pass ID as user to backend
+    if (!origUser) {
+        // case where user is unknown b/c of old notes cluttering up the place!
+        dispatch(
+            setNotificationFail(
+                "increasing likes for this blog failed, as it is a relic"
+            )
+        );
+        return;
+    }
+
+    const changedBlog = {
+        ...blog,
+        likes: blog.likes + 1,
+        user: blog.user.id,
+    };
+
+    try {
+        const changedBlogFromServer = await blogService.update(changedBlog);
+        changedBlogFromServer.user = origUser; // replace the original user info
+        dispatch(updateBlog(changedBlogFromServer));
+    } catch (exception) {
+        dispatch(setNotificationFail("increasing likes for this blog failed"));
+    }
+};
+
+export const removeBlog = (blogId) => async (dispatch, getState) => {
+    console.log("want to delete blog ", blogId);
+    try {
+        await blogService.remove(blogId);
+        dispatch(deleteBlog(blogId));
+    } catch (exception) {
+        dispatch(setNotificationFail("removing this blog failed"));
     }
 };
 

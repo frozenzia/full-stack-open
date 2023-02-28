@@ -3,6 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Blog from "./components/Blog";
 import {
+    increaseLikes,
+    initializeBlogs,
+    removeBlog,
+} from "./reducers/blogsReducer";
+import {
     resetNotification,
     setNotificationFail,
     setNotificationSuccess,
@@ -13,7 +18,6 @@ import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import AddBlogForm from "./components/AddBlogForm";
 import Notification from "./components/Notification";
-import { initializeBlogs, setBlogs } from "./reducers/blogsReducer";
 
 const App = () => {
     const dispatch = useDispatch();
@@ -70,56 +74,9 @@ const App = () => {
 
     const handleAddBlogPressed = () => blogFormRef.current.toggleVisible();
 
-    const increaseLikesOf = (blog) => {
-        console.log("likes of ", blog.id, " needs to be increased");
-        const origUser = blog.user; // must only pass ID as user to backend
-        if (!origUser) {
-            // case where user is unknown b/c of old notes cluttering up the place!
-            showActionResult(
-                "increasing likes for this blog failed, as it is a relic",
-                false
-            );
-            return;
-        }
+    const increaseLikesOf = (blog) => dispatch(increaseLikes(blog));
 
-        const changedBlog = {
-            ...blog,
-            likes: blog.likes + 1,
-            user: blog.user.id,
-        };
-
-        blogService
-            .update(changedBlog)
-            .then((changedBlogFromServer) => {
-                changedBlogFromServer.user = origUser; // replace the original user info
-                dispatch(
-                    setBlogs(
-                        blogs.map((b) =>
-                            b.id !== blog.id ? b : changedBlogFromServer
-                        )
-                    )
-                );
-            })
-            .catch(() => {
-                showActionResult(
-                    "increasing likes for this blog failed",
-                    false
-                );
-            });
-    };
-
-    const deleteBlog = (blogId) => {
-        console.log("want to delete blog ", blogId);
-
-        blogService
-            .remove(blogId)
-            .then(() => {
-                dispatch(setBlogs(blogs.filter((b) => b.id !== blogId)));
-            })
-            .catch(() => {
-                showActionResult("removing this blog failed", false);
-            });
-    };
+    const deleteBlog = (blogId) => dispatch(removeBlog(blogId));
 
     const handleLogin = async (event) => {
         event.preventDefault();
