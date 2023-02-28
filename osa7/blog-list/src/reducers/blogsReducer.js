@@ -89,7 +89,7 @@ export const increaseLikes = (blog) => async (dispatch) => {
     }
 };
 
-export const removeBlog = (blogId) => async (dispatch, getState) => {
+export const removeBlog = (blogId) => async (dispatch) => {
     console.log("want to delete blog ", blogId);
     try {
         await blogService.remove(blogId);
