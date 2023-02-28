@@ -26,14 +26,13 @@ const App = () => {
 
     const blogSort = (a, b) => (a.likes > b.likes ? -1 : 1);
 
-    const setBlogsSorted = (blogsToSort) => {
-        dispatch(setBlogs(blogsToSort.sort(blogSort)));
-    };
-
-    const blogs = useSelector((state) => state.blogs);
+    const blogs = useSelector((state) => {
+        const blogsToReturn = [...state.blogs];
+        return blogsToReturn.sort(blogSort);
+    });
 
     useEffect(() => {
-        blogService.getAll().then((gotBlogs) => setBlogsSorted(gotBlogs));
+        blogService.getAll().then((gotBlogs) => dispatch(setBlogs(gotBlogs)));
     }, []);
 
     useEffect(() => {
@@ -75,7 +74,7 @@ const App = () => {
             const resp = await blogService.create(blogObject);
             const newBlogs = [...blogs];
             newBlogs.push(resp);
-            setBlogsSorted(newBlogs);
+            dispatch(setBlogs(newBlogs));
             showActionResult(
                 `a new blog, "${resp.title}", by ${resp.author}, has been added`,
                 true
@@ -107,9 +106,11 @@ const App = () => {
             .update(changedBlog)
             .then((changedBlogFromServer) => {
                 changedBlogFromServer.user = origUser; // replace the original user info
-                setBlogsSorted(
-                    blogs.map((b) =>
-                        b.id !== blog.id ? b : changedBlogFromServer
+                dispatch(
+                    setBlogs(
+                        blogs.map((b) =>
+                            b.id !== blog.id ? b : changedBlogFromServer
+                        )
                     )
                 );
             })
@@ -127,7 +128,7 @@ const App = () => {
         blogService
             .remove(blogId)
             .then(() => {
-                setBlogsSorted(blogs.filter((b) => b.id !== blogId));
+                dispatch(setBlogs(blogs.filter((b) => b.id !== blogId)));
             })
             .catch(() => {
                 showActionResult("removing this blog failed", false);
