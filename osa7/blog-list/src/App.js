@@ -1,5 +1,5 @@
-import { useDispatch } from "react-redux";
 import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import Blog from "./components/Blog";
 import {
@@ -11,25 +11,29 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
+import { setBlogs } from "./reducers/blogsReducer";
 import AddBlogForm from "./components/AddBlogForm";
 import Notification from "./components/Notification";
 
 const App = () => {
     const dispatch = useDispatch();
 
-    const [blogs, setBlogs] = useState([]);
     const [user, setUser] = useState(null);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
     const blogFormRef = useRef();
 
-    const setBlogsSorted = (blogs) => {
-        setBlogs(blogs.sort((a, b) => (a.likes > b.likes ? -1 : 1)));
+    const blogSort = (a, b) => (a.likes > b.likes ? -1 : 1);
+
+    const setBlogsSorted = (blogsToSort) => {
+        dispatch(setBlogs(blogsToSort.sort(blogSort)));
     };
 
+    const blogs = useSelector((state) => state.blogs);
+
     useEffect(() => {
-        blogService.getAll().then((blogs) => setBlogsSorted(blogs));
+        blogService.getAll().then((gotBlogs) => setBlogsSorted(gotBlogs));
     }, []);
 
     useEffect(() => {
