@@ -2,9 +2,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 
-import blogService from "../services/blogs"
-import { appendBlog } from "../reducers/blogsReducer";
-import { setNotificationFail, setNotificationSuccess } from "../reducers/notificationReducer";
+import { createNewBlog } from "../reducers/blogsReducer";
 
 const AddBlogForm = ({ onSubmit }) => {
     const dispatch = useDispatch();
@@ -34,13 +32,7 @@ const AddBlogForm = ({ onSubmit }) => {
         setAuthor("");
         setUrl("");
         onSubmit();
-        try {
-            const resp = await blogService.create({ title, author, url, likes: 0 });
-            dispatch(appendBlog(resp));
-            dispatch(setNotificationSuccess(`a new blog, "${resp.title}", by ${resp.author}, has been added`))
-        } catch (exception) {
-            dispatch(setNotificationFail(exception.response.data.error));
-        }
+        dispatch(createNewBlog({ title, author, url }));
     };
 
     return (

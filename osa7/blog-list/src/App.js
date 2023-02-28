@@ -11,9 +11,9 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
-import { setBlogs } from "./reducers/blogsReducer";
 import AddBlogForm from "./components/AddBlogForm";
 import Notification from "./components/Notification";
+import { initializeBlogs, setBlogs } from "./reducers/blogsReducer";
 
 const App = () => {
     const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const App = () => {
     });
 
     useEffect(() => {
-        blogService.getAll().then((gotBlogs) => dispatch(setBlogs(gotBlogs)));
+        dispatch(initializeBlogs());
     }, []);
 
     useEffect(() => {
