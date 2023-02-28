@@ -68,21 +68,7 @@ const App = () => {
         setUser(null);
     };
 
-    const handleAddBlog = async (blogObject) => {
-        blogFormRef.current.toggleVisible();
-        try {
-            const resp = await blogService.create(blogObject);
-            const newBlogs = [...blogs];
-            newBlogs.push(resp);
-            dispatch(setBlogs(newBlogs));
-            showActionResult(
-                `a new blog, "${resp.title}", by ${resp.author}, has been added`,
-                true
-            );
-        } catch (exception) {
-            showActionResult(exception.response.data.error, false);
-        }
-    };
+    const handleAddBlogPressed = () => blogFormRef.current.toggleVisible();
 
     const increaseLikesOf = (blog) => {
         console.log("likes of ", blog.id, " needs to be increased");
@@ -162,7 +148,7 @@ const App = () => {
                 </button>
             </p>
             <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-                <AddBlogForm onSubmit={handleAddBlog} />
+                <AddBlogForm onSubmit={handleAddBlogPressed} />
             </Togglable>
             {blogs.map((blog) => (
                 <Blog
