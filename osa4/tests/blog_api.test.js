@@ -5,11 +5,10 @@ const supertest = require('supertest')
 const app = require('../src/app')
 const Blog = require('../models/blog');
 const User = require('../models/user');
-// const helper = require('./test_helper');
+const Comment = require('../models/comment');
 
 const api = supertest(app)
 
-// const initialNotes = helper.initialNotes;
 const initialBlogs = [
     {
         title: 'Start here',
@@ -46,6 +45,7 @@ beforeEach(async () => {
     // empty dbs
     await Blog.deleteMany({});
     await User.deleteMany({});
+    await Comment.deleteMany({});
 
     // populate dbs
     // initial user exists and logs in...
@@ -234,6 +234,24 @@ it('succeeds in editing "likes" field for a specific blog', async () => {
         .get('/api/blogs');
     const blogs = response2.body;
     expect(blogs[blogs.findIndex(b => b.id === id)].likes).toEqual(blogToEdit.likes + 1);
+});
+
+it('succeeds in adding a comment to a specific blog', async () => {
+    const response = await api
+        .get('/api/blogs');
+    const blogToCommentOn = response.body[0];
+    const { id } = blogToCommentOn;
+    const comment = { content: 'Oooo, child, that is one mean comment!' };
+    await api
+        .post(`/api/blogs/${id}/comment`)
+        .set('Authorization', `bearer ${token}`)
+        .send(comment)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+    const response2 = await api
+        .get('/api/blogs');
+    const blogs = response2.body;
+    expect(blogs[blogs.findIndex(b => b.id === id)].comments[0].content).toEqual(comment.content);
 });
 
 afterAll(() => {
