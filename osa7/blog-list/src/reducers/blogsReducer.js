@@ -1,10 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import blogService from "../services/blogs";
-import {
-    setNotificationFail,
-    setNotificationSuccess,
-} from "./notificationReducer";
+import { setNotification } from "./notificationReducer";
 
 const initialState = [];
 
@@ -52,12 +49,14 @@ export const createNewBlog = (blogContent) => async (dispatch) => {
         });
         dispatch(appendBlog(resp));
         dispatch(
-            setNotificationSuccess(
-                `a new blog, "${resp.title}", by ${resp.author}, has been added`
+            setNotification(
+                `a new blog, "${resp.title}", by ${resp.author}, has been added`,
+                true,
+                3
             )
         );
     } catch (exception) {
-        dispatch(setNotificationFail(exception.response.data.error));
+        dispatch(setNotification(exception.response.data.error, false, 3));
     }
 };
 
@@ -67,8 +66,10 @@ export const increaseLikes = (blog) => async (dispatch) => {
     if (!origUser) {
         // case where user is unknown b/c of old notes cluttering up the place!
         dispatch(
-            setNotificationFail(
-                "increasing likes for this blog failed, as it is a relic"
+            setNotification(
+                "increasing likes for this blog failed, as it is a relic",
+                false,
+                3
             )
         );
         return;
@@ -85,7 +86,9 @@ export const increaseLikes = (blog) => async (dispatch) => {
         changedBlogFromServer.user = origUser; // replace the original user info
         dispatch(updateBlog(changedBlogFromServer));
     } catch (exception) {
-        dispatch(setNotificationFail("increasing likes for this blog failed"));
+        dispatch(
+            setNotification("increasing likes for this blog failed", false, 3)
+        );
     }
 };
 
@@ -95,7 +98,7 @@ export const removeBlog = (blogId) => async (dispatch) => {
         await blogService.remove(blogId);
         dispatch(deleteBlog(blogId));
     } catch (exception) {
-        dispatch(setNotificationFail("removing this blog failed"));
+        dispatch(setNotification("removing this blog failed", false, 3));
     }
 };
 

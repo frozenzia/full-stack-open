@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import blogService from "../services/blogs";
 import loginService from "../services/login";
-import { setNotificationFail } from "./notificationReducer";
+import { setNotification } from "./notificationReducer";
 
 const initialState = null;
 
@@ -42,7 +42,9 @@ export const loginUser = (userCreds) => async (dispatch) => {
         blogService.setToken(user.token);
         dispatch(setUser(user));
     } catch (exception) {
-        dispatch(setNotificationFail("wrong creds (username or password)"));
+        dispatch(
+            setNotification("wrong creds (username or password)", false, 3)
+        );
     }
 };
 
