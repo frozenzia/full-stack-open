@@ -1,3 +1,5 @@
+import AddCommentForm from "./AddCommentForm";
+
 const Blog = ({ blog, onLikeBlog }) => {
     if (!blog) {
         return null;
@@ -11,6 +13,14 @@ const Blog = ({ blog, onLikeBlog }) => {
                 <button onClick={() => onLikeBlog(blog)}>like</button>
             </p>
             <p>added by {blog.user.name}</p>
+            <h3>comments</h3>
+
+            <AddCommentForm blogId={blog.id} />
+            <ul>
+                {blog.comments.map((c) => (
+                    <li key={c.id}>{c.content}</li>
+                ))}
+            </ul>
         </div>
     );
 };

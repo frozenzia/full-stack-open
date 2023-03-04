@@ -60,6 +60,17 @@ export const createNewBlog = (blogContent) => async (dispatch) => {
     }
 };
 
+export const createNewComment = (blogId, comment) => async (dispatch) => {
+    try {
+        await blogService.addComment(blogId, comment);
+        const blogs = await blogService.getAll();
+        const commentedBlog = blogs.find((b) => b.id === blogId);
+        dispatch(updateBlog(commentedBlog));
+    } catch (exception) {
+        dispatch(setNotification(exception.response.data.error, false, 3));
+    }
+};
+
 export const increaseLikes = (blog) => async (dispatch) => {
     console.log("likes of ", blog.id, " needs to be increased");
     const origUser = blog.user; // must only pass ID as user to backend
