@@ -90,6 +90,7 @@ export const increaseLikes = (blog) => async (dispatch) => {
         ...blog,
         likes: blog.likes + 1,
         user: blog.user.id,
+        comments: blog.comments.map((c) => c.id),
     };
 
     try {

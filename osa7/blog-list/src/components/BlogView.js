@@ -1,3 +1,4 @@
+import OwnButton from "./OwnButton";
 import AddCommentForm from "./AddCommentForm";
 
 const Blog = ({ blog, onLikeBlog }) => {
@@ -10,7 +11,7 @@ const Blog = ({ blog, onLikeBlog }) => {
             <p>{blog.url}</p>
             <p>
                 {blog.likes} likes{" "}
-                <button onClick={() => onLikeBlog(blog)}>like</button>
+                <OwnButton onClick={() => onLikeBlog(blog)}>like</OwnButton>
             </p>
             <p>added by {blog.user.name}</p>
             <h3>comments</h3>

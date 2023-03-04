@@ -1,61 +1,67 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Route, Routes, useMatch, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useMatch } from "react-router-dom";
+import { AppBar, Container, Stack, Toolbar } from "@mui/material";
 
-import {
-    increaseLikes,
-    initializeBlogs,
-    removeBlog,
-} from "./reducers/blogsReducer";
 import Blog from "./components/Blog";
 import User from "./components/UserView";
 import Users from "./components/UsersView";
 import BlogView from "./components/BlogView";
+import OwnButton from "./components/OwnButton";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import AddBlogForm from "./components/AddBlogForm";
 import Notification from "./components/Notification";
 import { initializeUsers } from "./reducers/usersReducer";
+import { increaseLikes, initializeBlogs } from "./reducers/blogsReducer";
 import { initializeUser, loginUser, logoutUser } from "./reducers/userReducer";
 
 const Menu = () => {
     const dispatch = useDispatch();
     const handleLogout = () => dispatch(logoutUser());
-    const padding = {
-        paddingRight: 5,
+    const margin = {
+        marginRight: 5,
     };
     const menuStyle = {
         backgroundColor: "lightGrey",
-        padding: 5,
     };
     return (
         <>
-            <div style={menuStyle}>
-                <Link to="/blogs" style={padding}>
-                    blogs
-                </Link>
-                <Link to="/users" style={padding}>
-                    users
-                </Link>
-                <LoggedInUserHeader onClick={handleLogout} />
-            </div>
+            <AppBar position="static" style={menuStyle}>
+                <Toolbar>
+                    <OwnButton style={margin} component={Link} to="/blogs">
+                        blogs
+                    </OwnButton>
+                    <OwnButton style={margin} component={Link} to="/users">
+                        users
+                    </OwnButton>
+                    <LoggedInUserHeader
+                        style={{ position: "absolute", right: "1em" }}
+                        onClick={handleLogout}
+                    />
+                </Toolbar>
+            </AppBar>
             <h2> blog app</h2>
         </>
     );
 };
 
-const LoggedInUserHeader = ({ onClick }) => {
+const LoggedInUserHeader = ({ onClick, ...props }) => {
     const user = useSelector((state) => state.user);
     if (!user) {
         return null;
     }
     return (
-        <>
-            {user.name} logged in{" "}
-            <button onClick={onClick} data-cy="logoutButton">
+        <span {...props}>
+            {user.name} logged in
+            <OwnButton
+                style={{ marginLeft: "1em" }}
+                onClick={onClick}
+                data-cy="logoutButton"
+            >
                 logout
-            </button>
-        </>
+            </OwnButton>
+        </span>
     );
 };
 
@@ -75,9 +81,11 @@ const Blogs = () => {
             <Togglable buttonLabel="create new blog" ref={blogFormRef}>
                 <AddBlogForm onSubmit={handleAddBlogPressed} />
             </Togglable>
-            {blogs.map((blog) => (
-                <Blog key={blog.id} blog={blog} />
-            ))}
+            <Stack spacing={2}>
+                {blogs.map((blog) => (
+                    <Blog key={blog.id} blog={blog} />
+                ))}
+            </Stack>
         </div>
     );
 };
@@ -144,9 +152,9 @@ const App = () => {
         : null;
 
     return (
-        <>
-            <Menu />
+        <Container>
             <Notification />
+            <Menu />
             <Routes>
                 <Route path="/users/:id" element={<User user={user} />} />
                 <Route path="/users" element={<Users />} />
@@ -159,7 +167,7 @@ const App = () => {
                 <Route path="/blogs" element={<Home />} />
                 <Route path="/" element={<Home />} />
             </Routes>
-        </>
+        </Container>
     );
 };
 

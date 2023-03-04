@@ -1,7 +1,9 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
+import { TextField } from "@mui/material";
 
+import OwnButton from "./OwnButton";
 import { createNewBlog } from "../reducers/blogsReducer";
 
 const AddBlogForm = ({ onSubmit }) => {
@@ -39,8 +41,8 @@ const AddBlogForm = ({ onSubmit }) => {
         <form onSubmit={handleSubmit}>
             <h2>create new</h2>
             <div>
-                title
-                <input
+                <TextField
+                    label="title"
                     type="text"
                     value={title}
                     name="Title"
@@ -49,8 +51,8 @@ const AddBlogForm = ({ onSubmit }) => {
                 />
             </div>
             <div>
-                author
-                <input
+                <TextField
+                    label="author"
                     type="text"
                     value={author}
                     name="Author"
@@ -59,8 +61,8 @@ const AddBlogForm = ({ onSubmit }) => {
                 />
             </div>
             <div>
-                url
-                <input
+                <TextField
+                    label="url"
                     type="text"
                     value={url}
                     name="Url"
@@ -68,9 +70,13 @@ const AddBlogForm = ({ onSubmit }) => {
                     placeholder="enter blog url here"
                 />
             </div>
-            <button id="createBlogButton" type="submit">
+            <OwnButton
+                style={{ marginTop: "0.5em", marginBottom: 0 }}
+                id="createBlogButton"
+                type="submit"
+            >
                 create
-            </button>
+            </OwnButton>
         </form>
     );
 };
