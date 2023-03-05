@@ -1,0 +1,38 @@
+.notice {
+    background-color: lightgrey;
+    border-style: solid;
+    border-radius: 4px;
+    border-width: 3px;
+    padding: 10px;
+    width: 40%;
+    color: green;
+    border-color: green;
+}
+
+.fail {
+    color: red;
+    border-color: red;
+}
+
+.showMe {
+    display: "";
+}
+
+.hideMe {
+    display: none;
+}
+
+.singleBlog {
+    border: 3px solid rgba(128,128,128,.5);
+    border-radius: 5px;
+    margin: 0.25em 0;
+    padding: 0.25em 0.5em;
+}
+
+button {
+    margin: 0.5em 0;
+}
+
+button:nth-child(2) {
+    margin-top: 0em;
+}

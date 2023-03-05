@@ -1,0 +1,7 @@
+POST http://localhost:5003/api/blogs/64024a2a8b6a0b0c325be2a8/comment
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBicm93biIsImlkIjoiNjQwMjYwMGM1YzY5ODVhZDM5OWI4NDAyIiwiaWF0IjoxNjc3ODc3MjgzfQ.x1cf1mB-Yu42HCgb1kjSowAPja2jOXe0CbRIVn1HvF8
+
+{
+    "content": "This blog was something else, I'm telling you! Wow!"
+}
